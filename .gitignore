@@ -1,1 +1,10 @@
+# in case you name the venv folder differently, changed it here
 venv/
+
+# only for modules
+**/__pycache__/
+**/*.pyc
+
+
+# for pytest 
+**/.pytest_cache/
