@@ -1,13 +1,7 @@
 import re
 from datetime import datetime
 
-class User:
-    def __init__(self, email, username, country, phone_number, birth_date):
-        self.email = email
-        self.username = username
-        self.country = country
-        self.phone_number = phone_number
-        self.birth_date = birth_date
+from src.User import User
 
 class UserManager:
     def __init__(self):
@@ -23,7 +17,7 @@ class UserManager:
         pattern = r"[^@]+@[^@]+\.[^@]+"
         return re.match(pattern, email) is not None
 
-    def validate_phone_prefix(self, phone_number):
+    def validate_phone_prefix(self, phone_number, country):
         country_codes = {
             "Romania": "+40",
             "USA": "+1",
@@ -37,9 +31,9 @@ class UserManager:
             "India": "+91"
         }
 
-        for country, prefix in country_codes.items():
+        for c, prefix in country_codes.items():
             if phone_number.startswith(prefix):
-                return country 
+                return country == c
 
         return False
     
@@ -58,10 +52,13 @@ class UserManager:
         if self.email_exists(email):
             return 400, "Email already exists"
 
-        if not (3 <= len(username) <= 20):
+        if len(username) <= 3:
             return 400, "Username too short"
+        
+        if len(username) >= 20:
+            return 400, "Username too long"
 
-        if not self.validate_phone_prefix(phone_number):
+        if not self.validate_phone_prefix(phone_number, country):
             return 400, "Phone number prefix does not match the country"
 
         new_user = User(email, username, country, phone_number, birth_date)
