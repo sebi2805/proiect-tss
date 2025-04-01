@@ -11,7 +11,7 @@ This being said these are some projects that have a similar approach like us:
 
 on the other hand we also have some research papers that are studying the pytest inline and how small is the overload https://arxiv.org/abs/2305.13486#:~:text=program%20statements,provides%2C%20and%20the%20intended%20use, maybe we can also implement some of this
 
-#PyTest vs Unittest
+## PyTest vs Unittest
 | Feature | **Pytest (3rd party)** | **unittest (standard library)** |
 |----------------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 | **Initial Setup** | External installation required, but auto-discovers tests effortlessly | Built-in (no install), but requires strict naming conventions (`test*` methods) |
@@ -62,3 +62,13 @@ Mutmut applies mutations like:
 - Flipping booleans (`True` → `False`)
 - Removing return statements
 - Altering constant values or string literals
+
+
+## Boundary Value Analysis
+
+Boundary Value Analysis (BVA) focuses on testing the boundaries of input domains rather than selecting arbitrary values. The rationale behind BVA is that errors are more likely to occur at the edges of valid input ranges rather than within the normal operating range. This technique is particularly effective for numeric values, string lengths, date ranges, and other inputs with clear minimum and maximum constraints.
+
+Why Use Boundary Value Analysis?
+- Catches edge case errors that might not appear in normal input values.
+- Reduces the number of test cases while still providing strong test coverage.
+- Ensures robustness of the system by testing both valid and invalid boundary inputs.
