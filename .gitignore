@@ -8,3 +8,5 @@ venv/
 
 # for pytest 
 **/.pytest_cache/
+
+.coverage
