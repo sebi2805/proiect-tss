@@ -69,6 +69,7 @@ We validated that extreme and edge-case inputs are properly handled. Although we
 ## Statement Analysis
 
 We applied Statement analisys on the `UserManager` class with a 98% statement coverage. The following Control Flow Graph has been created:
+[Lucid Chart](<https://lucid.app/lucidchart/52e5e0a2-3c17-4dda-8930-4ef34498d4b7/edit?invitationId=inv_e62830fb-62b8-4810-9e4c-0ee0b0dc8ec7>)
 
 ![Control Flow Graph Code](images/statement_analysis_code.png)
 
