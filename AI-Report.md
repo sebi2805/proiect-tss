@@ -231,6 +231,31 @@ An interesting observation is that the AI-generated test case includes both a va
 
 The generated code looks quite similar to the one we wrote, it only has a few more comments and data specific to another region (USA).
 
+## Boundary Value Analysis
+
+### Our code
+
+```python
+def test_email_exists_with_non_matching_email():
+    um = UserManager()
+    um.create_user(
+        email="existing@example.com",
+        username="user1",
+        country="Romania",
+        phone_number="+40 712345678",
+        birth_date_str="2000-01-01"
+    )
+    # This email does not match existing user
+    assert not um.email_exists("nonexistent@example.com")
+
+
+def test_validate_phone_prefix_no_match():
+    um = UserManager()
+    # Country prefix that isn't mapped
+    assert not um.validate_phone_prefix("+999999", "Neverland")
+
+```
+
 ## Statement Analisys
 
 ### Our code
