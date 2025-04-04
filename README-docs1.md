@@ -72,3 +72,20 @@ Why Use Boundary Value Analysis?
 - Catches edge case errors that might not appear in normal input values.
 - Reduces the number of test cases while still providing strong test coverage.
 - Ensures robustness of the system by testing both valid and invalid boundary inputs.
+
+
+
+## Decision-Based Coverage
+
+Decision-Based Coverage (also known as branch coverage) is a white-box testing technique that ensures every decision point in the code is tested for all possible outcomes—true and false. Unlike line coverage, which only verifies if a line is executed, branch coverage verifies that each condition has been fully exercised.
+
+
+
+Key Concepts:
+- Decisions: Statements like if, for, while, and try/except blocks.
+- Branches: The two possible outcomes of each decision (e.g., True and False).
+- To achieve 100% decision coverage, each of the following must be tested:
+- Every if condition evaluated to both true and false
+- Every loop entered and skipped
+- Every exception raised and not raised
+
