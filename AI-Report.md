@@ -85,6 +85,7 @@ The generated code looks quite similar to the one we wrote, it only has a few mo
 
 ### Our code
 
+We will create two different tests: the first will check whether a given email is already present in the user list, and the second will verify the validity of a given phone prefix.
 ```python
 def test_email_exists_with_non_matching_email():
     um = UserManager()
@@ -102,8 +103,61 @@ def test_email_exists_with_non_matching_email():
 def test_validate_phone_prefix_no_match():
     um = UserManager()
     # Country prefix that isn't mapped
-    assert not um.validate_phone_prefix("+999999", "Neverland")
+    assert not um.validate_phone_prefix("+999999", "TestTest")
 
 ```
 
+### AI-generated code
 
+The following prompt was given to ChatGPT's GPT-4o model:
+
+`For the provided UserManager.py file, can you generate test cases to ensure decision-based coverage?`
+
+This was the result:
+
+```python
+def test_email_exists_with_non_matching_email():
+    """
+    This test checks that the email_exists method correctly identifies that
+    a given email is not already present in the user list.
+    """
+    # Create an instance of UserManager
+    user_manager = UserManager()
+
+    # First, add a user with a known email to simulate existing data
+    user_manager.create_user(
+        email="existing.user@example.com",
+        username="existing_user",
+        country="USA",
+        phone_number="+1 5551234567",
+        birth_date_str="1990-01-01"
+    )
+
+    # Now, check for a different email that should not be found in the system
+    email_check = user_manager.email_exists("not.found@example.com")
+
+    # Assert that the non-existent email returns False
+    assert email_check is False
+
+
+def test_validate_phone_prefix_no_match():
+    """
+    This test ensures that validate_phone_prefix returns False when the
+    phone number prefix does not correspond to any known country.
+    """
+    # Instantiate a new UserManager object
+    user_manager = UserManager()
+
+    # Define a phone number with a prefix not included in the mapping
+    invalid_phone_number = "+999 5551234567"
+    unknown_country = "Atlantis"
+
+    # Call the validation method with the unknown prefix and country
+    is_valid = user_manager.validate_phone_prefix(invalid_phone_number, unknown_country)
+
+    # Assert that the validation fails, as expected
+    assert is_valid is False
+
+```
+
+The AI-provided code contains more comments, offering both a summary of each method and line-by-line explanations where necessary. Additionally, it includes more generic examples than our own.
