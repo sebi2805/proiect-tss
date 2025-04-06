@@ -2,16 +2,17 @@ Our approach would be to have a package 'src', what does contain our bussnies lo
 
 The purpose of this project is to create tests using some the current tehcnologies and where certain requirements don't fit with the project, we would adapt it with some other packages or functionalities integrated in pycharm (because last year pychamr also integrated some code-coverage functionalities).
 
-Regarding the setup, we have a page dedicated to it, we try to make this code work in a similar way on multiple machine, that's why we created an venv, We could also consider using https://github.com/pyenv/pyenv, so we manage our python versions.
+Regarding the setup, we have a page dedicated to it, we try to make this code work in a similar way on multiple machine, that's why we created an venv, We could also consider using <https://github.com/pyenv/pyenv>, so we manage our python versions.
 
 This being said these are some projects that have a similar approach like us:
 
-- https://github.com/MartinThoma/mpu - a python library where tests are mandatory so you can have backwards compability
-- https://github.com/ryankanno/cookiecutter-py - a standard python project template
+- <https://github.com/MartinThoma/mpu> - a python library where tests are mandatory so you can have backwards compability
+- <https://github.com/ryankanno/cookiecutter-py> - a standard python project template
 
-on the other hand we also have some research papers that are studying the pytest inline and how small is the overload https://arxiv.org/abs/2305.13486#:~:text=program%20statements,provides%2C%20and%20the%20intended%20use, maybe we can also implement some of this
+on the other hand we also have some research papers that are studying the pytest inline and how small is the overload <https://arxiv.org/abs/2305.13486#:~:text=program%20statements,provides%2C%20and%20the%20intended%20use>, maybe we can also implement some of this
 
 ## PyTest vs Unittest
+
 | Feature | **Pytest (3rd party)** | **unittest (standard library)** |
 |----------------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 | **Initial Setup** | External installation required, but auto-discovers tests effortlessly | Built-in (no install), but requires strict naming conventions (`test*` methods) |
@@ -22,8 +23,8 @@ on the other hand we also have some research papers that are studying the pytest
 | **IDE/CI Integration** | Well-supported in most IDEs (e.g., PyCharm) and CI tools; coverage needs config/plugins| Natively supported in IDEs/CI; coverage via `coverage.py` or IDE integration |
 | **Current Popularity** | Widely adopted, de facto standard for new projects | Mostly used in legacy code or by those preferring stdlib; declining in new code |
 
-https://blog.jetbrains.com/pycharm/2024/03/pytest-vs-unittest/#:~:text=That%20said%2C%20for%20new%20projects,has%20become%20the%20default%20choice
-https://dev.to/vbuxbaum/testing-tests-in-python-part-1-reasons-and-alternatives-42bn#:~:text=,assert
+<https://blog.jetbrains.com/pycharm/2024/03/pytest-vs-unittest/#:~:text=That%20said%2C%20for%20new%20projects,has%20become%20the%20default%20choice>
+<https://dev.to/vbuxbaum/testing-tests-in-python-part-1-reasons-and-alternatives-42bn#:~:text=,assert>
 
 ## Pytest-cov vs. PyCharm Code Coverage
 
@@ -63,12 +64,22 @@ Mutmut applies mutations like:
 - Removing return statements
 - Altering constant values or string literals
 
-
 ## Boundary Value Analysis
 
 Boundary Value Analysis (BVA) focuses on testing the boundaries of input domains rather than selecting arbitrary values. The rationale behind BVA is that errors are more likely to occur at the edges of valid input ranges rather than within the normal operating range. This technique is particularly effective for numeric values, string lengths, date ranges, and other inputs with clear minimum and maximum constraints.
 
 Why Use Boundary Value Analysis?
+
 - Catches edge case errors that might not appear in normal input values.
 - Reduces the number of test cases while still providing strong test coverage.
 - Ensures robustness of the system by testing both valid and invalid boundary inputs.
+
+## Statement Analysis  
+
+Statement Analysis is a technique used to evaluate whether each line of code in a program has been executed at least once during testing. This method ensures that no part of the code remains untested, reducing the risk of hidden bugs.  
+
+Why Use Statement Analysis?
+
+- Identifies Dead Code – Helps detect unused or redundant code.  
+- Improves Test Coverage – Ensures that every statement has been executed at least once.  
+- Complements Code Coverage – While coverage tools show percentage metrics, statement analysis provides deeper insights into untested logic.  
