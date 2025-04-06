@@ -13,7 +13,8 @@ The `create_user` method now accepts the following parameters:
 #### Email
 
 - **E1** = { e | e has a valid format and is unique (e.g., "john.doe@example.com") }
-- **E2** = { e | e has an invalid format (e.g., "johndoeexample.com", "john.doe@com") or is already registered }
+<!-- TODO  or is already registered -->
+- **E2** = { e | e has an invalid format (e.g., "johndoeexample.com", "john.doe@com") }
 
 #### Username
 
@@ -98,9 +99,9 @@ Key examples include:
 - **c_11121** ∈ C_11121:  
   ("john.doe@example.com", "john_doe", "1990-05-10", "+33 712345678", "Romania")
 
-- **c_11112** ∈ C_11112:  
+- **c_11112** ∈ C*11112:  
   ("john.doe@example.com", "john_doe", "1990-05-10", "+40 712345678", "Mars")  
-  _(Invalid country example)_
+  *(Invalid country example)\_
 
 - **c_21111** ∈ C_21111:  
   ("johndoeexample.com", "john_doe", "1990-05-10", "+40 712345678", "Romania")
