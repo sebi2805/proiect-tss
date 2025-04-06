@@ -36,7 +36,7 @@ The `create_user` method now accepts the following parameters:
 #### Country
 
 Let the valid set of countries be:  
-\(\{ \text{"Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India"} \}\)
+{ "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" }
 
 - **R1** = { r | r ∈ { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" } }
 - **R2** = { r | r ∉ { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" } }
