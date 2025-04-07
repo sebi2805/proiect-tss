@@ -1,14 +1,110 @@
-[WIP SEBI]
-For class equivalence, we have 4 parameters and these 4 parameters can be classified in the following categories
+## Class Equivalence Analysis
 
-| Parameter        | Valid Class                                     | Invalid Classes                                                                                         |
-| ---------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| **Email**        | Correct format (`john.doe@example.com`), unique | Incorrect format (`johndoeexample.com`, `john.doe@com`), already registered                             |
-| **Username**     | 3-20 characters (`john123`, `user_name`)        | Too short (< 3 characters, e.g., `ab`), too long (> 20 characters, e.g., `thisusernameiswaytoolong123`) |
-| **Birth Date**   | Format `YYYY-MM-DD`, past date (`1990-05-10`)   | Incorrect format (`1990/05/10`), future date (`2090-05-10`)                                             |
-| **Phone Number** | Valid prefix (`+40 712345678` for Romania)      | Invalid prefix (`+99 712345678`), mismatched country (`country="Romania"` but number starts with `+33`) |
+The `create_user` method now accepts the following parameters:
+
+1. Email
+2. Username
+3. Birth Date
+4. Phone Number
+5. Country
+
+### Individual Parameter Equivalence Classes
+
+#### Email
+
+- **E1** = { e | e has a valid format and is unique (e.g., "john.doe@example.com") }
+<!-- TODO  or is already registered -->
+- **E2** = { e | e has an invalid format (e.g., "johndoeexample.com", "john.doe@com") }
+
+#### Username
+
+- **U1** = { u | u has a valid length (3 ≤ length ≤ 20) (e.g., "john_doe", "user123") }
+- **U2** = { u | u is too short (< 3 characters, e.g., "ab") }
+- **U3** = { u | u is too long (> 20 characters, e.g., "thisusernameiswaytoolong123") }
+
+#### Birth Date
+
+- **B1** = { b | b is in the format "YYYY-MM-DD" and is a past date (e.g., "1990-05-10") }
+- **B2** = { b | b is in an incorrect format (e.g., "1990/05/10") }
+- **B3** = { b | b is in the format "YYYY-MM-DD" but is a future date (e.g., "2090-05-10") }
+
+#### Phone Number
+
+- **P1** = { p | p has a valid format and prefix for the specified country (e.g., "+40 712345678" for Romania) }
+- **P2** = { p | p has an invalid format or an incorrect prefix (e.g., "+33 712345678" when country is "Romania") }
+
+#### Country
+
+Let the valid set of countries be:  
+{ "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" }
+
+- **R1** = { r | r ∈ { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" } }
+- **R2** = { r | r ∉ { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" } }
 
 ---
+
+### Global Equivalence Classes
+
+We combine the individual classes to form global test cases. Denote a global class as **C\_{abcde}**, where:
+
+- **a**: Email class (1 for E1, 2 for E2)
+- **b**: Username class (1 for U1, 2 for U2, 3 for U3)
+- **c**: Birth Date class (1 for B1, 2 for B2, 3 for B3)
+- **d**: Phone Number class (1 for P1, 2 for P2)
+- **e**: Country class (1 for R1, 2 for R2)
+
+Key examples include:
+
+1. **C_11111** = { (e, u, b, p, r) | e ∈ E1, u ∈ U1, b ∈ B1, p ∈ P1, r ∈ R1 }  
+   _All parameters valid (happy path)._
+
+2. **C_12111** = { (e, u, b, p, r) | e ∈ E1, u ∈ U2, b ∈ B1, p ∈ P1, r ∈ R1 }  
+   _Invalid: Username is too short._
+
+3. **C_13111** = { (e, u, b, p, r) | e ∈ E1, u ∈ U3, b ∈ B1, p ∈ P1, r ∈ R1 }  
+   _Invalid: Username is too long._
+
+4. **C_11211** = { (e, u, b, p, r) | e ∈ E1, u ∈ U1, b ∈ B2, p ∈ P1, r ∈ R1 }  
+   _Invalid: Birth Date format is incorrect._
+
+5. **C_11311** = { (e, u, b, p, r) | e ∈ E1, u ∈ U1, b ∈ B3, p ∈ P1, r ∈ R1 }  
+   _Invalid: Birth Date is in the future._
+
+6. **C_11121** = { (e, u, b, p, r) | e ∈ E1, u ∈ U1, b ∈ B1, p ∈ P2, r ∈ R1 }  
+   _Invalid: Phone Number is invalid._
+
+7. **C_11112** = { (e, u, b, p, r) | e ∈ E1, u ∈ U1, b ∈ B1, p ∈ P1, r ∈ R2 }  
+   _Invalid: Country is not in the valid list._
+
+8. **C_21111** = { (e, u, b, p, r) | e ∈ E2, u ∈ U1, b ∈ B1, p ∈ P1, r ∈ R1 }  
+   _Invalid: Email is invalid or duplicated._
+
+---
+
+- **c_11111** ∈ C_11111:  
+  ("john.doe@example.com", "john_doe", "1990-05-10", "+40 712345678", "Romania")
+
+- **c_12111** ∈ C_12111:  
+  ("john.doe@example.com", "ab", "1990-05-10", "+40 712345678", "Romania")
+
+- **c_13111** ∈ C_13111:  
+  ("john.doe@example.com", "thisusernameiswaytoolong123", "1990-05-10", "+40 712345678", "Romania")
+
+- **c_11211** ∈ C_11211:  
+  ("john.doe@example.com", "john_doe", "1990/05/10", "+40 712345678", "Romania")
+
+- **c_11311** ∈ C_11311:  
+  ("john.doe@example.com", "john_doe", "2090-05-10", "+40 712345678", "Romania")
+
+- **c_11121** ∈ C_11121:  
+  ("john.doe@example.com", "john_doe", "1990-05-10", "+33 712345678", "Romania")
+
+- **c_11112** ∈ C*11112:  
+  ("john.doe@example.com", "john_doe", "1990-05-10", "+40 712345678", "Mars")  
+  *(Invalid country example)\_
+
+- **c_21111** ∈ C_21111:  
+  ("johndoeexample.com", "john_doe", "1990-05-10", "+40 712345678", "Romania")
 
 ## Boundary Value Analysis
 
@@ -69,7 +165,7 @@ We validated that extreme and edge-case inputs are properly handled. Although we
 ## Statement Analysis
 
 We applied Statement analisys on the `UserManager` class with a 98% statement coverage. The following Control Flow Graph has been created:
-[Lucid Chart](<https://lucid.app/lucidchart/52e5e0a2-3c17-4dda-8930-4ef34498d4b7/edit?invitationId=inv_e62830fb-62b8-4810-9e4c-0ee0b0dc8ec7>)
+[Lucid Chart](https://lucid.app/lucidchart/52e5e0a2-3c17-4dda-8930-4ef34498d4b7/edit?invitationId=inv_e62830fb-62b8-4810-9e4c-0ee0b0dc8ec7)
 
 ![Control Flow Graph Code](images/statement_analysis_code.png)
 
