@@ -1,6 +1,6 @@
 # AI Report – Human vs AI on Condition Coverage
 
-## 🔍 Project Context
+## Project Context
 
 The project tests the business logic behind the `UserManager` class, responsible for creating users by validating email, username, phone prefix, and birth date. Tests are implemented using `pytest`, focusing not only on **statement and decision coverage**, but also pushing towards **full condition coverage**.
 
@@ -125,7 +125,7 @@ def test_username_upper_boundary_invalid(user_manager):
 
 ##  Statement Analysis: Birth Date Field
 
-### 👨 Our Code
+### Our Code
 
 ```python
 def test_valid_user_creation(self):
@@ -172,9 +172,9 @@ def test_valid_birth_date(user_manager):
 
 | Area | Our Code | AI Output | Verdict |
 |------|----------|-----------|---------|
-|  Condition Coverage | Full atomic condition control | Misses branches & combinations | 🏆 Ours wins |
-|  Boundary Analysis | Valid + invalid boundaries with valid inputs | Correct pattern, invalid data | 🏆 Ours wins |
-|  Statement Coverage | Isolated valid and invalid input for logic lines | Mixes invalid dependencies | 🏆 Ours wins |
+|  Condition Coverage | Full atomic condition control | Misses branches & combinations |  Ours wins |
+|  Boundary Analysis | Valid + invalid boundaries with valid inputs | Correct pattern, invalid data |  Ours wins |
+|  Statement Coverage | Isolated valid and invalid input for logic lines | Mixes invalid dependencies |  Ours wins |
 
 ---
 
