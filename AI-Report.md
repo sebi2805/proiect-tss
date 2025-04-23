@@ -4,6 +4,160 @@ We are having the context of the project and the tests that are implemented in t
 
 We will compare our tests with AI-generated tests to see if they are better or worse. We will use tools like Github Copilot and ChatGPT to generate the tests.
 
+## Class Equivalence Analysis
+
+### Our code
+
+```python
+    @pytest.mark.parametrize(
+        "email, username, birth_date_str, phone_number, country, expected_status, expected_msg_fragment",
+        [
+            # C_11111: All parameters valid (E1, U1, B1, P1, R1)
+            ("john.doe@example.com", "john_doe", "1990-05-10", "+40 712345678", "Romania", 200, "User successfully created"),
+            # C_21111: Invalid email (E2)
+            ("johndoeexample.com", "john_doe", "1990-05-10", "+40 712345678", "Romania", 400, "Invalid email"),
+            # C_12111: Username too short (U2)
+            ("jane.doe@example.com", "ab", "1990-05-10", "+40 712345678", "Romania", 400, "Username too short"),
+            # C_13111: Username too long (U3)
+            ("jane.doe2@example.com", "a" * 21, "1990-05-10", "+40 712345678", "Romania", 400, "Username too long"),
+            # C_11211: Birth date in incorrect format (B2)
+            ("jack.doe@example.com", "jack_doe", "1990/05/10", "+40 712345678", "Romania", 400, "Invalid birth date"),
+            # C_11311: Birth date in future (B3)
+            ("future.doe@example.com", "future_user", "2090-05-10", "+40 712345678", "Romania", 400, "Birth date is in the future"),
+            # C_11121: Invalid phone number (P2)
+            ("phone.doe@example.com", "phone_user", "1990-05-10", "+33 712345678", "Romania", 400, "Phone number prefix does not match the country"),
+            # C_11112: Invalid country (R2)
+            # as it will not have a prefix
+            ("country.doe@example.com", "country_user", "1990-05-10", "+40 712345678", "Mars", 400, "Phone number prefix does not match the country"),
+        ]
+    )
+
+    def test_equivalence_classes(self, email, username, birth_date_str, phone_number, country, expected_status, expected_msg_fragment):
+        status, msg = self.um.create_user(
+            email=email,
+            username=username,
+            birth_date_str=birth_date_str,
+            phone_number=phone_number,
+            country=country
+        )
+        assert status == expected_status
+        assert expected_msg_fragment in msg
+
+```
+
+### AI Generated-code
+
+Using GithubCopilot, the prompt used for generating the test case was:
+
+`Generate a class equivalence‑analysis test suite for the UserManager class. Write a concise set of tests that together cover the entire input domain.`
+
+```python
+import pytest
+from datetime import datetime, timedelta
+
+from src.UserManager import UserManager
+
+@pytest.fixture
+def um():
+    return UserManager()
+
+# ==== 1. Equivalence classes for email ====
+@pytest.mark.parametrize(
+    "email, expected",
+    [
+        ("user@example.com", True),      # valid
+        ("user.name+tag@domain.co", True), # valid complex
+        ("no-at-sign.com", False),       # invalid: missing '@'
+        ("@no-local-part.com", False),   # invalid: missing local
+        ("user@.com", False),            # invalid: domain starts with dot
+    ],
+)
+def test_validate_email(um, email, expected):
+    assert um.validate_email(email) is expected
+
+# ==== 2. Equivalence classes for phone prefix ====
+@pytest.mark.parametrize(
+    "phone, country, expected",
+    [
+        ("+40 712345678", "Romania", True),   # valid RO
+        ("+49 1234567", "Germany", True),     # valid DE
+        ("+40 712345678", "USA", False),      # valid USA
+        ("0712345678", "Romania", False),     # missing '+'
+        ("+999123", "Unknown", False),        # unsupported code
+    ],
+)
+def test_validate_phone_prefix(um, phone, country, expected):
+    assert um.validate_phone_prefix(phone, country) is expected
+
+# ==== 3. Equivalence classes for birth_date_str ====
+@pytest.mark.parametrize(
+    "bd_str, expected_code, expected_msg",
+    [
+        # valid past date
+        ("2000-01-01", 200, "User successfully created"),
+        # invalid format
+        ("01-01-2000", 400, "Invalid birth date"),
+        # future date
+        ((datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d"), 400, "Birth date is in the future"),
+    ],
+)
+def test_birth_date_classes(um, bd_str, expected_code, expected_msg):
+    code, msg = um.create_user(
+        email="e@t.co",
+        username="validuser",
+        country="Romania",
+        phone_number="+40 712345678",
+        birth_date_str=bd_str,
+    )
+    assert code == expected_code
+    assert expected_msg in msg
+
+# ==== 4. Equivalence classes for username length ====
+@pytest.mark.parametrize(
+    "username, expected_code, expected_msg",
+    [
+        ("usr",        400, "Username too short"),  # <= 3
+        ("user4",      200, "User successfully created"),  # between 4–19
+        ("a" * 19,     200, "User successfully created"),  # upper valid
+        ("a" * 20,     400, "Username too long"),   # >= 20
+    ],
+)
+def test_username_length(um, username, expected_code, expected_msg):
+    code, msg = um.create_user(
+        email="u@e.com",
+        username=username,
+        country="Romania",
+        phone_number="+40 712345678",
+        birth_date_str="1995-05-05",
+    )
+    assert code == expected_code
+    assert expected_msg in msg
+
+# ==== 5. Equivalence classes for duplicate email ====
+def test_email_exists(um):
+    # creare inițială
+    um.create_user("dup@e.com", "dupuser", "Romania", "+40 712345678", "1990-01-01")
+    # încercare duplicat
+    code, msg = um.create_user("dup@e.com", "other", "Romania", "+40 712345678", "1990-01-01")
+    assert code == 400
+    assert "Email already exists" in msg
+
+# ==== 6. Happy path end‑to‑end ====
+def test_full_valid_user(um):
+    code, msg = um.create_user(
+        email="good@e.com",
+        username="gooduser",
+        country="Germany",
+        phone_number="+49 123456789",
+        birth_date_str="1985-12-12",
+    )
+    assert code == 200
+    assert msg == "User successfully created"
+
+```
+
+As you can observe, the generated code isn't really tight to class equivalence testing, it is more related to general testing. Moreover, when it is testing the phone number format for USA, the test is wrong because the test should fail.
+
 ## Boundary Value Analysis
 
 ### Our code
@@ -96,7 +250,7 @@ def test_valid_user_creation(self):
         )
         assert status == 200
         assert msg == "User successfully created"
-        
+
 def test_birth_date_in_future(self):
         future_date = (datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d")
         status, msg = self.um.create_user(

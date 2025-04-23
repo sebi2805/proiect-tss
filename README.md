@@ -1,14 +1,16 @@
 ## Class Equivalence Analysis
 
-The `create_user` method now accepts the following parameters:
+The `create_user` method accepts the following parameters:
 
-1. Email
-2. Username
-3. Birth Date
-4. Phone Number
-5. Country
+1. e - a string with an email template
+2. u - a string that represents the username
+3. b - a date that represents the birth date
+4. p - a string with phone number template
+5. r - a string that represents a country
 
 ### Individual Parameter Equivalence Classes
+
+### Input domain
 
 #### Email
 
@@ -38,10 +40,29 @@ The `create_user` method now accepts the following parameters:
 Let the valid set of countries be:  
 { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" }
 
-- **R1** = { r | r ∈ { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" } }
-- **R2** = { r | r ∉ { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" } }
+- **R1** = { r | c ∈ { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" } }
+- **R2** = { r | c ∉ { "Romania", "USA", "UK", "France", "Germany", "Italy", "Spain", "Canada", "Australia", "India" } }
 
 ---
+
+### Output Domain
+
+Consists of the following two attributes:
+
+- `status` – the HTTP response code (200 = success, 400 = error)
+- `msg` – a descriptive message indicating whether the operation succeeded or why it failed
+
+These map to the following output equivalence classes:
+
+- **O1** = { status = 200; msg contains `"User successfully created"` }
+- **O2** = { status = 400; msg contains `"Invalid email"` }
+- **O3** = { status = 400; msg contains `"Email already registered"` }
+- **O4** = { status = 400; msg contains `"Username too short"` }
+- **O5** = { status = 400; msg contains `"Username too long"` }
+- **O6** = { status = 400; msg contains `"Invalid birth date format"` }
+- **O7** = { status = 400; msg contains `"Birth date is in the future"` }
+- **O8** = { status = 400; msg contains `"Invalid phone number"` }
+- **O9** = { status = 400; msg contains `"Unsupported country"` }
 
 ### Global Equivalence Classes
 
@@ -105,6 +126,52 @@ Key examples include:
 
 - **c_21111** ∈ C_21111:  
   ("johndoeexample.com", "john_doe", "1990-05-10", "+40 712345678", "Romania")
+
+| Test    | Email                | Username                    | Birthdate  | Phone         | Country | Expected Output                    |
+| ------- | -------------------- | --------------------------- | ---------- | ------------- | ------- | ---------------------------------- |
+| C_11111 | john.doe@example.com | john_doe                    | 1990-05-10 | +40 712345678 | Romania | 200, “User successfully created”   |
+| C_12111 | john.doe@example.com | ab                          | 1990-05-10 | +40 712345678 | Romania | 400, “Username too short”          |
+| C_13111 | john.doe@example.com | thisusernameiswaytoolong123 | 1990-05-10 | +40 712345678 | Romania | 400, “Username too long”           |
+| C_11211 | john.doe@example.com | john_doe                    | 1990/05/10 | +40 712345678 | Romania | 400, “Invalid birth date format”   |
+| C_11311 | john.doe@example.com | john_doe                    | 2090-05-10 | +40 712345678 | Romania | 400, “Birth date is in the future” |
+| C_11121 | john.doe@example.com | john_doe                    | 1990-05-10 | +33 712345678 | Romania | 400, “Invalid phone number”        |
+| C_11112 | john.doe@example.com | john_doe                    | 1990-05-10 | +40 712345678 | Mars    | 400, “Unsupported country”         |
+| C_21111 | johndoeexample.com   | john_doe                    | 1990-05-10 | +40 712345678 | Romania | 400, “Invalid email”               |
+
+```python
+    @pytest.mark.parametrize(
+        "email, username, birth_date_str, phone_number, country, expected_status, expected_msg_fragment",
+        [
+            # C_11111: All parameters valid (E1, U1, B1, P1, R1)
+            ("john.doe@example.com", "john_doe", "1990-05-10", "+40 712345678", "Romania", 200, "User successfully created"),
+            # C_21111: Invalid email (E2)
+            ("johndoeexample.com", "john_doe", "1990-05-10", "+40 712345678", "Romania", 400, "Invalid email"),
+            # C_12111: Username too short (U2)
+            ("jane.doe@example.com", "ab", "1990-05-10", "+40 712345678", "Romania", 400, "Username too short"),
+            # C_13111: Username too long (U3)
+            ("jane.doe2@example.com", "a" * 21, "1990-05-10", "+40 712345678", "Romania", 400, "Username too long"),
+            # C_11211: Birth date in incorrect format (B2)
+            ("jack.doe@example.com", "jack_doe", "1990/05/10", "+40 712345678", "Romania", 400, "Invalid birth date"),
+            # C_11311: Birth date in future (B3)
+            ("future.doe@example.com", "future_user", "2090-05-10", "+40 712345678", "Romania", 400, "Birth date is in the future"),
+            # C_11121: Invalid phone number (P2)
+            ("phone.doe@example.com", "phone_user", "1990-05-10", "+33 712345678", "Romania", 400, "Phone number prefix does not match the country"),
+            # C_11112: Invalid country (R2)
+            # as it will not have a prefix
+            ("country.doe@example.com", "country_user", "1990-05-10", "+40 712345678", "Mars", 400, "Phone number prefix does not match the country"),
+        ]
+    )
+    def test_equivalence_classes(self, email, username, birth_date_str, phone_number, country, expected_status, expected_msg_fragment):
+        status, msg = self.um.create_user(
+            email=email,
+            username=username,
+            birth_date_str=birth_date_str,
+            phone_number=phone_number,
+            country=country
+        )
+        assert status == expected_status
+        assert expected_msg_fragment in msg
+```
 
 ## Boundary Value Analysis
 
