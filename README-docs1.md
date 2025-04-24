@@ -13,15 +13,15 @@ on the other hand we also have some research papers that are studying the pytest
 
 ## PyTest vs Unittest
 
-| Feature | **Pytest (3rd party)** | **unittest (standard library)** |
-|----------------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| **Initial Setup** | External installation required, but auto-discovers tests effortlessly | Built-in (no install), but requires strict naming conventions (`test*` methods) |
-| **Test Syntax** | Uses plain functions with `assert` (concise, detailed failure messages) | Requires `TestCase` classes and `assert*` methods (more boilerplate) |
-| **Fixtures & Setup** | Powerful fixtures (function, module, session scope); mocking plugins available | `setUp`/`tearDown` methods; limited native fixture support | |
-| **Extensibility** | Rich plugin ecosystem (coverage, Django, benchmarks); active community | Basic built-in features; few extensions beyond third-party tools like `nose` |
-| **Parallel Execution** | Yes – via plugins (e.g., `xdist`) | Not by default – only possible using external tools |
-| **IDE/CI Integration** | Well-supported in most IDEs (e.g., PyCharm) and CI tools; coverage needs config/plugins| Natively supported in IDEs/CI; coverage via `coverage.py` or IDE integration |
-| **Current Popularity** | Widely adopted, de facto standard for new projects | Mostly used in legacy code or by those preferring stdlib; declining in new code |
+| Feature                | **Pytest (3rd party)**                                                                  | **unittest (standard library)**                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | --- |
+| **Initial Setup**      | External installation required, but auto-discovers tests effortlessly                   | Built-in (no install), but requires strict naming conventions (`test*` methods) |
+| **Test Syntax**        | Uses plain functions with `assert` (concise, detailed failure messages)                 | Requires `TestCase` classes and `assert*` methods (more boilerplate)            |
+| **Fixtures & Setup**   | Powerful fixtures (function, module, session scope); mocking plugins available          | `setUp`/`tearDown` methods; limited native fixture support                      |     |
+| **Extensibility**      | Rich plugin ecosystem (coverage, Django, benchmarks); active community                  | Basic built-in features; few extensions beyond third-party tools like `nose`    |
+| **Parallel Execution** | Yes – via plugins (e.g., `xdist`)                                                       | Not by default – only possible using external tools                             |
+| **IDE/CI Integration** | Well-supported in most IDEs (e.g., PyCharm) and CI tools; coverage needs config/plugins | Natively supported in IDEs/CI; coverage via `coverage.py` or IDE integration    |
+| **Current Popularity** | Widely adopted, de facto standard for new projects                                      | Mostly used in legacy code or by those preferring stdlib; declining in new code |
 
 <https://blog.jetbrains.com/pycharm/2024/03/pytest-vs-unittest/#:~:text=That%20said%2C%20for%20new%20projects,has%20become%20the%20default%20choice>
 <https://dev.to/vbuxbaum/testing-tests-in-python-part-1-reasons-and-alternatives-42bn#:~:text=,assert>
@@ -74,12 +74,25 @@ Why Use Boundary Value Analysis?
 - Reduces the number of test cases while still providing strong test coverage.
 - Ensures robustness of the system by testing both valid and invalid boundary inputs.
 
-## Statement Analysis  
+## Decision-Based Coverage
 
-Statement Analysis is a technique used to evaluate whether each line of code in a program has been executed at least once during testing. This method ensures that no part of the code remains untested, reducing the risk of hidden bugs.  
+Decision-Based Coverage (also known as branch coverage) is a white-box testing technique that ensures every decision point in the code is tested for all possible outcomes—true and false. Unlike line coverage, which only verifies if a line is executed, branch coverage verifies that each condition has been fully exercised.
+
+Key Concepts:
+
+- Decisions: Statements like if, for, while, and try/except blocks.
+- Branches: The two possible outcomes of each decision (e.g., True and False).
+- To achieve 100% decision coverage, each of the following must be tested:
+- Every if condition evaluated to both true and false
+- Every loop entered and skipped
+- Every exception raised and not raised
+
+## Statement Analysis
+
+Statement Analysis is a technique used to evaluate whether each line of code in a program has been executed at least once during testing. This method ensures that no part of the code remains untested, reducing the risk of hidden bugs.
 
 Why Use Statement Analysis?
 
-- Identifies Dead Code – Helps detect unused or redundant code.  
-- Improves Test Coverage – Ensures that every statement has been executed at least once.  
-- Complements Code Coverage – While coverage tools show percentage metrics, statement analysis provides deeper insights into untested logic.  
+- Identifies Dead Code – Helps detect unused or redundant code.
+- Improves Test Coverage – Ensures that every statement has been executed at least once.
+- Complements Code Coverage – While coverage tools show percentage metrics, statement analysis provides deeper insights into untested logic.
