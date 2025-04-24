@@ -231,7 +231,7 @@ The following table shows test data derived from our boundary classes:
 
 ---
 
-### Running the Tests and Coverage Analysis
+### Running the Tests and Coverage Analysis on Boundary Classes
 
 We executed the boundary tests using the following command:
 
@@ -271,3 +271,212 @@ We applied Statement analisys on the `UserManager` class with a 98% statement co
 ![Control Flow Graph Code](images/statement_analysis_code.png)
 
 ![Control Flow Graph](images/statement_analysis_graph.png)
+
+---
+
+## Independent Circuit Testing
+
+This form of analysis identifies the **upper bound on the number of paths** required to achieve complete **branch coverage**.
+
+It is based on **McCabe's Cyclomatic Complexity**, which estimates the number of **linearly independent circuits** in a control flow graph (CFG).
+
+---
+
+### McCabe's Cyclomatic Complexity
+
+To compute the number of independent circuits, we use the formula:
+
+\[
+V(G) = e - n + 2p
+\]
+
+Where:
+
+- `e` = number of edges
+- `n` = number of nodes
+- `p` = number of connected components (for a single method, `p = 1`)
+
+---
+
+### Estimation for `create_user`
+
+#### Node and Edge Analysis
+
+| Node ID | Description                              | Type     |
+| ------- | ---------------------------------------- | -------- |
+| N1      | Start node                               | Entry    |
+| N2      | Try to parse birth date                  | Decision |
+| N3      | Exception handling (invalid date format) | Terminal |
+| N4      | Check if birth date is in the future     | Decision |
+| N5      | Return future date error                 | Terminal |
+| N6      | Check email format                       | Decision |
+| N7      | Return invalid email                     | Terminal |
+| N8      | Check if email exists                    | Decision |
+| N9      | Return duplicate email                   | Terminal |
+| N10     | Check if username is too short           | Decision |
+| N11     | Return username too short                | Terminal |
+| N12     | Check if username is too long            | Decision |
+| N13     | Return username too long                 | Terminal |
+| N14     | Validate phone prefix                    | Decision |
+| N15     | Return phone prefix mismatch             | Terminal |
+| N16     | Create user and return success           | Terminal |
+
+**Total Nodes (`n`) = 16**
+
+---
+
+| Edge # | From → To | Reason                        |
+| ------ | --------- | ----------------------------- |
+| E1     | N1 → N2   | Begin method                  |
+| E2     | N2 → N3   | Exception raised              |
+| E3     | N2 → N4   | Valid birth date              |
+| E4     | N4 → N5   | Future date                   |
+| E5     | N4 → N6   | Past date                     |
+| E6     | N6 → N7   | Invalid email                 |
+| E7     | N6 → N8   | Valid email                   |
+| E8     | N8 → N9   | Email exists                  |
+| E9     | N8 → N10  | Email unique                  |
+| E10    | N10 → N11 | Username too short            |
+| E11    | N10 → N12 | Username long enough          |
+| E12    | N12 → N13 | Username too long             |
+| E13    | N12 → N14 | Username length valid         |
+| E14    | N14 → N15 | Invalid phone prefix          |
+| E15    | N14 → N16 | Valid phone and country match |
+
+**Total Edges (`e`) = 15**
+
+---
+
+### Final Calculation
+
+Using the formula:
+
+\[
+V(G) = e - n + 2 = 15 - 16 + 2 = \boxed{1}
+\]
+
+This is too low because **each decision point counts toward complexity**, and this formula assumes a simplified structure.
+
+**Better formula for structured programs**:
+
+\[
+V(G) = \text{Number of predicate nodes (decisions)} + 1
+\]
+
+We have:
+
+- `try/except` = 1
+- `if birth_date >= today` = 1
+- `validate_email` = 1
+- `email_exists` = 1
+- `username too short` = 1
+- `username too long` = 1
+- `validate_phone_prefix` = 1
+
+So:
+
+\[
+V(G) = 7 + 1 = \boxed{8}
+\]
+
+And we also add the **final return (success)** as another control branch → \[
+V(G) = \boxed{9}
+\]
+
+---
+
+### Independent Paths (Base Path Set)
+
+The following 9 paths test each control decision independently:
+
+| Path | Description                                  | Result Code | Message Fragment                     |
+| ---- | -------------------------------------------- | ----------- | ------------------------------------ |
+| A    | All inputs valid                             | 200         | "User successfully created"          |
+| B    | Invalid birth date format                    | 400         | "Invalid birth date"                 |
+| C    | Future birth date                            | 400         | "Birth date is in the future"        |
+| D    | Invalid email format                         | 400         | "Invalid email"                      |
+| E    | Duplicate email                              | 400         | "Email already exists"               |
+| F    | Username too short                           | 400         | "Username too short"                 |
+| G    | Username too long                            | 400         | "Username too long"                  |
+| H    | Valid prefix, wrong country (mismatch)       | 400         | "Phone number prefix does not match" |
+| I    | Phone number does not match any known prefix | 400         | "Phone number prefix does not match" |
+
+---
+
+### Python Test Example
+
+```python
+    @pytest.mark.parametrize(
+        "email, username, birth_date_str, phone_number, country, expected_status, expected_msg",
+        [
+            # Path A: All valid
+            ("john@example.com", "validUser", "1990-01-01",
+             "+40 712345678", "Romania", 200, "User successfully created"),
+
+            # Path B: Invalid birth date format
+            ("badformat@example.com", "validUser", "1990/01/01",
+             "+40 712345678", "Romania", 400, "Invalid birth date"),
+
+            # Path C: Future birth date
+            ("future@example.com", "validUser", "2099-01-01",
+             "+40 712345678", "Romania", 400, "Birth date is in the future"),
+
+            # Path D: Invalid email format
+            ("invalidemail", "validUser", "1990-01-01",
+             "+40 712345678", "Romania", 400, "Invalid email"),
+
+            # Path E: Duplicate email
+            ("existing@example.com", "newuser", "1990-01-01",
+             "+40 712345678", "Romania", 400, "Email already exists"),
+
+            # Path F: Username too short
+            ("short@example.com", "ab", "1990-01-01",
+             "+40 712345678", "Romania", 400, "Username too short"),
+
+            # Path G: Username too long
+            ("long@example.com", "a" * 25, "1990-01-01",
+             "+40 712345678", "Romania", 400, "Username too long"),
+
+            # Path H: Invalid phone prefix
+            ("wrongprefix@example.com", "validUser", "1990-01-01", "+33 712345678",
+             "Romania", 400, "Phone number prefix does not match"),
+
+            # Path I: Phone number doesn't match any known prefix
+            ("unknownprefix@example.com", "validUser", "1990-01-01",
+             "1234567890", "Romania", 400, "Phone number prefix does not match"),
+        ]
+)
+def test_independent_circuits(self, email, username, birth_date_str, phone_number, country, expected_status, expected_msg):
+    status, msg = self.um.create_user(
+        email=email,
+        username=username,
+        birth_date_str=birth_date_str,
+        phone_number=phone_number,
+        country=country
+    )
+    assert status == expected_status
+    assert expected_msg in msg
+```
+
+### Running the Tests and Coverage Analysis on Independent Circuits
+
+We executed the boundary tests using the following command:
+
+```sh
+pytest --cov=src --cov-report=term-missing .\test\test_independent_circuits.py
+```
+
+The results were as follows:
+
+```plaintext
+
+Name                 Stmts   Miss  Cover   Missing
+--------------------------------------------------
+src\User.py              7      0   100%
+src\UserManager.py      40      0   100%
+src\__init__.py          0      0   100%
+--------------------------------------------------
+TOTAL                   47      0   100%
+```
+
+[![Video Preview](https://img.youtube.com/vi/vAOG3gtxtfs/0.jpg)](https://youtu.be/vAOG3gtxtfs)

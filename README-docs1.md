@@ -1,3 +1,5 @@
+## Project structure and purpose
+
 Our approach would be to have a package 'src', what does contain our bussnies logic in 2 modules User and UserManager. Here we will have an functionality that will create users if certain information are validated, also in order to cover more tests we would like to implement a functionality for searching the user, this way we can adapt better tests to showcase
 
 The purpose of this project is to create tests using some the current tehcnologies and where certain requirements don't fit with the project, we would adapt it with some other packages or functionalities integrated in pycharm (because last year pychamr also integrated some code-coverage functionalities).
@@ -13,18 +15,20 @@ on the other hand we also have some research papers that are studying the pytest
 
 ## PyTest vs Unittest
 
-| Feature | **Pytest (3rd party)** | **unittest (standard library)** |
-|----------------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| **Initial Setup** | External installation required, but auto-discovers tests effortlessly | Built-in (no install), but requires strict naming conventions (`test*` methods) |
-| **Test Syntax** | Uses plain functions with `assert` (concise, detailed failure messages) | Requires `TestCase` classes and `assert*` methods (more boilerplate) |
-| **Fixtures & Setup** | Powerful fixtures (function, module, session scope); mocking plugins available | `setUp`/`tearDown` methods; limited native fixture support | |
-| **Extensibility** | Rich plugin ecosystem (coverage, Django, benchmarks); active community | Basic built-in features; few extensions beyond third-party tools like `nose` |
-| **Parallel Execution** | Yes – via plugins (e.g., `xdist`) | Not by default – only possible using external tools |
-| **IDE/CI Integration** | Well-supported in most IDEs (e.g., PyCharm) and CI tools; coverage needs config/plugins| Natively supported in IDEs/CI; coverage via `coverage.py` or IDE integration |
-| **Current Popularity** | Widely adopted, de facto standard for new projects | Mostly used in legacy code or by those preferring stdlib; declining in new code |
+| Feature                | **Pytest (3rd party)**                                                                  | **unittest (standard library)**                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | --- |
+| **Initial Setup**      | External installation required, but auto-discovers tests effortlessly                   | Built-in (no install), but requires strict naming conventions (`test*` methods) |
+| **Test Syntax**        | Uses plain functions with `assert` (concise, detailed failure messages)                 | Requires `TestCase` classes and `assert*` methods (more boilerplate)            |
+| **Fixtures & Setup**   | Powerful fixtures (function, module, session scope); mocking plugins available          | `setUp`/`tearDown` methods; limited native fixture support                      |     |
+| **Extensibility**      | Rich plugin ecosystem (coverage, Django, benchmarks); active community                  | Basic built-in features; few extensions beyond third-party tools like `nose`    |
+| **Parallel Execution** | Yes – via plugins (e.g., `xdist`)                                                       | Not by default – only possible using external tools                             |
+| **IDE/CI Integration** | Well-supported in most IDEs (e.g., PyCharm) and CI tools; coverage needs config/plugins | Natively supported in IDEs/CI; coverage via `coverage.py` or IDE integration    |
+| **Current Popularity** | Widely adopted, de facto standard for new projects                                      | Mostly used in legacy code or by those preferring stdlib; declining in new code |
 
 <https://blog.jetbrains.com/pycharm/2024/03/pytest-vs-unittest/#:~:text=That%20said%2C%20for%20new%20projects,has%20become%20the%20default%20choice>
 <https://dev.to/vbuxbaum/testing-tests-in-python-part-1-reasons-and-alternatives-42bn#:~:text=,assert>
+
+---
 
 ## Pytest-cov vs. PyCharm Code Coverage
 
@@ -46,9 +50,11 @@ Both use `coverage.py` under the hood. Key differences lie in usage and output:
 - Useful for fast feedback during development or teaching.
 - Can merge multiple coverage runs.
 
+---
+
 ## Mutation
 
-To improv the quality of our tests and not just focus on code coverage, we’ll integrate **mutatin testing** using [Mutmut](https://github.com/boxed/mutmut). The idea is simple: we intentionally inject small bugs into the code (called **mutants**) and see if our tests catch them. If a mutant survives, it’s a sign that the test might not be verifying the behavior properly.
+To improve the quality of our tests and not just focus on code coverage, we’ll integrate **mutatin testing** using [Mutmut](https://github.com/boxed/mutmut). The idea is simple: we intentionally inject small bugs into the code (called **mutants**) and see if our tests catch them. If a mutant survives, it’s a sign that the test might not be verifying the behavior properly.
 
 We’re interested in testing not just that "code is run", but that it’s actually **validated**. For example, a test might give you 100% coverage but still miss a logic error if there’s no assertion and that's is what we are trying to combine also with the 2 tools dor code coverage.
 
@@ -64,21 +70,25 @@ Mutmut applies mutations like:
 - Removing return statements
 - Altering constant values or string literals
 
+---
+
 ## Boundary Value Analysis
 
 Boundary Value Analysis (BVA) focuses on testing the boundaries of input domains rather than selecting arbitrary values. The rationale behind BVA is that errors are more likely to occur at the edges of valid input ranges rather than within the normal operating range. This technique is particularly effective for numeric values, string lengths, date ranges, and other inputs with clear minimum and maximum constraints.
 
-Why Use Boundary Value Analysis?
+#### Why Use Boundary Value Analysis?
 
 - Catches edge case errors that might not appear in normal input values.
 - Reduces the number of test cases while still providing strong test coverage.
 - Ensures robustness of the system by testing both valid and invalid boundary inputs.
 
+---
+
 ## Decision-Based Coverage
 
 Decision-Based Coverage (also known as branch coverage) is a white-box testing technique that ensures every decision point in the code is tested for all possible outcomes—true and false. Unlike line coverage, which only verifies if a line is executed, branch coverage verifies that each condition has been fully exercised.
 
-Key Concepts:
+#### Key Concepts:
 
 - Decisions: Statements like if, for, while, and try/except blocks.
 - Branches: The two possible outcomes of each decision (e.g., True and False).
@@ -87,12 +97,35 @@ Key Concepts:
 - Every loop entered and skipped
 - Every exception raised and not raised
 
+---
+
 ## Statement Analysis
 
 Statement Analysis is a technique used to evaluate whether each line of code in a program has been executed at least once during testing. This method ensures that no part of the code remains untested, reducing the risk of hidden bugs.
 
-Why Use Statement Analysis?
+#### Why Use Statement Analysis?
 
 - Identifies Dead Code – Helps detect unused or redundant code.
 - Improves Test Coverage – Ensures that every statement has been executed at least once.
 - Complements Code Coverage – While coverage tools show percentage metrics, statement analysis provides deeper insights into untested logic.
+
+---
+
+## Independent Circuit Testing
+
+Independent Circuit Testing (ICT) focuses on testing the individual decision circuits in a program to ensure all possible decision paths are verified. It is particularly useful for validating complex decision structures and ensuring that all logic paths are properly exercised in isolation.
+
+This method is based on McCabe's Cyclomatic Complexity formula, which helps determine the number of independent paths in a program. The formula is as follows:
+
+- **V(G) = e - n + 2** for a single program or subroutine, where:
+  - `e` is the number of edges (arcs),
+  - `n` is the number of nodes,
+  - `p` is the number of connected components (typically 1 for a single program).
+
+By calculating the number of independent circuits, ICT ensures that each unique logical decision path is tested without interference from other paths in the program.
+
+#### Why Use Independent Circuit Testing?
+
+- **Validates Decision Paths**: Ensures that all possible decision outcomes (true/false) are tested, providing comprehensive coverage.
+- **Reduces Complexity**: Focuses on testing small, independent sections of code, making it easier to identify errors in logic.
+- **Improves Test Accuracy**: By isolating logic tests, it reduces the chance of missing edge cases or subtle bugs.
