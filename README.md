@@ -193,10 +193,6 @@ In our case, we applied Boundary Value Analysis to the `UserManager` class to en
 
    - Minimal valid email format (`a@b.c`) → Expected success
 
-4. **Phone Number Prefix Matching**
-   - Valid country prefix (`+1` for USA when the country is "USA") → Expected success
-   - Invalid prefix (`+1` for Romania when the expected prefix is `+40`) → Expected failure
-
 These tests ensure that `UserManager` correctly validates user inputs at the boundaries of acceptable values.
 
 ### Running the Tests and Coverage Analysis
@@ -213,15 +209,15 @@ The results were as follows:
 Name                 Stmts   Miss  Cover   Missing
 --------------------------------------------------
 src\User.py              7      0   100%
-src\UserManager.py      40      7    82%   12-13, 38, 43-44, 50, 53
+src\UserManager.py      40      8    80%   12-13, 38, 43-44, 50, 53, 62
 src\__init__.py          0      0   100%
 --------------------------------------------------
-TOTAL                   47      7    85%
+TOTAL                   47      8    83%
 ```
 
 ### Why 100% Coverage Isn't Necessary
 
-The reported 82% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
+The reported 80% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
 
 Since our goal was to validate boundary conditions, achieving 100% coverage is not strictly necessary. Instead, our focus is on ensuring that key input constraints are thoroughly tested, which our boundary tests accomplish effectively.
 

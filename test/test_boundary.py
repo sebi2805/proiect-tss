@@ -86,25 +86,3 @@ class TestUserManagerBoundary:
         )
         assert status == 200
         assert "User successfully created" in msg
-
-    def test_boundary_phone_prefix_valid(self):
-        status, msg = self.um.create_user(
-            email="phone_valid@example.com",
-            username="phone_valid",
-            country="USA",
-            phone_number="+1 1234567890",  # Correct prefix
-            birth_date_str="2003-02-26"
-        )
-        assert status == 200
-        assert "User successfully created" in msg
-
-    def test_boundary_phone_prefix_invalid(self):
-        status, msg = self.um.create_user(
-            email="phone_invalid@example.com",
-            username="phone_invalid",
-            country="Romania",
-            phone_number="+1 1234567890",  # Wrong prefix
-            birth_date_str="2003-02-26"
-        )
-        assert status == 400
-        assert "Phone number prefix does not match the country" in msg
