@@ -175,29 +175,61 @@ Key examples include:
 
 ## Boundary Value Analysis
 
-In our case, we applied Boundary Value Analysis to the `UserManager` class to ensure that edge cases related to user creation were properly handled. The key boundary conditions we tested include:
+### What is Boundary Value Analysis?
 
-1. **Username Length**
+Boundary Value Analysis (BVA) is a black-box test design technique that complements equivalence partitioning. It focuses on testing input values at their boundaries, where errors are statistically more likely to occur. Instead of randomly selecting values from valid partitions, BVA suggests choosing:
 
-   - Minimum invalid: `aaa` (3 characters) → Expected failure
-   - Minimum valid: `aaaa` (4 characters) → Expected success
-   - Maximum valid: `a` \* 19 (19 characters) → Expected success
-   - Maximum invalid: `a` \* 20 (20 characters) → Expected failure
+- The minimum and maximum valid values
+- Values just below and above these limits
 
-2. **Birth Date**
+This method is particularly useful for identifying off-by-one errors and validating input restrictions.
 
-   - Future date (today’s date) → Expected failure
-   - Oldest valid date (`1900-01-01`) → Expected success
+---
 
-3. **Email Format**
+### Identifying Boundary Classes for UserManager
 
-   - Minimal valid email format (`a@b.c`) → Expected success
+In our case, we applied BVA to the `create_user` method from the `UserManager` class. The input fields we considered for boundary testing are:
 
-4. **Phone Number Prefix Matching**
-   - Valid country prefix (`+1` for USA when the country is "USA") → Expected success
-   - Invalid prefix (`+1` for Romania when the expected prefix is `+40`) → Expected failure
+1. **Username length**:
 
-These tests ensure that `UserManager` correctly validates user inputs at the boundaries of acceptable values.
+   - Valid range: 4 to 19 characters
+   - Classes:
+     - U_1: valid username length (4, 19)
+     - U_2: under min length (3)
+     - U_3: over max length (20)
+
+2. **Birth date**:
+
+   - Valid range: between 1900-01-01 and yesterday
+   - Classes:
+     - B_1: valid old date (e.g., `1900-01-01`)
+     - B_2: boundary invalid (today’s date or future)
+
+3. **Email format**:
+   - Basic syntactic check (e.g., must contain `@` and `.`)
+   - Classes:
+     - E_1: minimal valid email (`a@b.c`)
+     - E_2: invalid formats – not explicitly tested here as this falls more under format validation
+
+---
+
+### Test Cases from Boundary Classes
+
+The following table shows test data derived from our boundary classes:
+
+| Username Length  | Birth Date   | Email            | Expected Result             | Class |
+| ---------------- | ------------ | ---------------- | --------------------------- | ----- |
+| `aaa` (3 chars)  | 2003-02-26   | test@example.com | Username too short          | U_2   |
+| `aaaa` (4 chars) | 2003-02-26   | test@example.com | User successfully created   | U_1   |
+| `a` \* 19        | 2003-02-26   | test@example.com | User successfully created   | U_1   |
+| `a` \* 20        | 2003-02-26   | test@example.com | Username too long           | U_3   |
+| `validname`      | `1900-01-01` | test@example.com | User successfully created   | B_1   |
+| `validname`      | Today’s date | test@example.com | Birth date is in the future | B_2   |
+| `minimal`        | 2003-02-26   | `a@b.c`          | User successfully created   | E_1   |
+
+> Note: All tests assume that `country="Romania"` and `phone_number="+40 712345678"` are valid and constant, to isolate boundary analysis to the fields above.
+
+---
 
 ### Running the Tests and Coverage Analysis
 
@@ -213,19 +245,21 @@ The results were as follows:
 Name                 Stmts   Miss  Cover   Missing
 --------------------------------------------------
 src\User.py              7      0   100%
-src\UserManager.py      40      7    82%   12-13, 38, 43-44, 50, 53
+src\UserManager.py      40      8    80%   12-13, 38, 43-44, 50, 53, 62
 src\__init__.py          0      0   100%
 --------------------------------------------------
-TOTAL                   47      7    85%
+TOTAL                   47      8    83%
 ```
+
+[![Video Preview](https://img.youtube.com/vi/Ai9dJchoAgs/0.jpg)](https://youtu.be/Ai9dJchoAgs)
 
 ### Why 100% Coverage Isn't Necessary
 
-The reported 82% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
+The reported 80% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
 
 Since our goal was to validate boundary conditions, achieving 100% coverage is not strictly necessary. Instead, our focus is on ensuring that key input constraints are thoroughly tested, which our boundary tests accomplish effectively.
 
-We validated that extreme and edge-case inputs are properly handled. Although we achieved 82% coverage, our tests sufficiently address critical boundary conditions, ensuring robust user validation.
+We validated that extreme and edge-case inputs are properly handled. Although we achieved 80% coverage, our tests sufficiently address critical boundary conditions, ensuring robust user validation.
 
 ---
 
