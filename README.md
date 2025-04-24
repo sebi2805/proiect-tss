@@ -251,6 +251,8 @@ src\__init__.py          0      0   100%
 TOTAL                   47      8    83%
 ```
 
+[![Video Preview](https://img.youtube.com/vi/Ai9dJchoAgs/0.jpg)](https://youtu.be/Ai9dJchoAgs)
+
 ### Why 100% Coverage Isn't Necessary
 
 The reported 80% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
