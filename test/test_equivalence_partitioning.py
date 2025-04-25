@@ -37,4 +37,4 @@ class TestUserManagerEquivalencePartitioning:
             country=country
         )
         assert status == expected_status
-        assert expected_msg_fragment in msg
+        assert expected_msg_fragment == msg

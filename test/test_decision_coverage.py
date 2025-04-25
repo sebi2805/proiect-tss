@@ -51,7 +51,7 @@ class TestUserManagerDecisionCoverage:
             email="success@example.com",
             username="happy_user",
             country="Canada",
-            phone_number="+1 2345678901",
+            phone_number="+5 2345678901",
             birth_date_str="1980-01-01"
         )
         assert status == 200
