@@ -253,6 +253,70 @@ TOTAL                   47      8    83%
 
 [![Video Preview](https://img.youtube.com/vi/Ai9dJchoAgs/0.jpg)](https://youtu.be/Ai9dJchoAgs)
 
+## Decision Coverage
+
+**Purpose:** To verify the application’s behavior at critical decision points (if statements, loops, logical expressions), ensuring that all possible branches (true / false) are tested at least once.
+
+---
+
+### Analyzed Code: `create_user` from `UserManager.py`
+
+This function includes several decisions that must be covered to guarantee robust behavior:
+
+| # | Decision Statement | Type | Description |
+|--|---------------------|------|-------------|
+| 1 | `if birth_date >= datetime.today()` | simple if | Checks if the birth date is in the future |
+| 2 | `if not self.validate_email(email)` | simple if | Validates email format |
+| 3 | `if self.email_exists(email)` | if without else | Checks if the email is already used |
+| 4 | `if len(username) <= 3` / `elif len(username) >= 20` | if with else | Checks username length |
+| 5 | `if not self.validate_phone_prefix(...)` | simple if | Checks phone prefix-country match |
+
+Helper functions tested separately:
+- `email_exists()` – contains a `for` + `if`
+- `validate_phone_prefix()` – contains a `for` + `if` + `return`
+
+---
+
+### Loops and Decisions Covered
+
+| Location | Loop Type | Behavior Tested |
+|----------|-----------|------------------|
+| `for user in self.users:` | `for` loop in `email_exists()` | Tests case where email does not match any existing user |
+| `for c, prefix in country_codes.items():` | `for` loop in `validate_phone_prefix()` | Tests case where prefix doesn't match (triggers fallback logic) |
+
+---
+
+### Implemented Tests: `test_decision_coverage.py`
+
+| Test | Branch Tested | Target Decision |
+|------|---------------|-----------------|
+| `test_email_exists_with_non_matching_email()` | False | `email_exists()` |
+| `test_validate_phone_prefix_no_match()` | False | `validate_phone_prefix()` |
+| `test_username_exactly_3_characters()` | True → error | `if len(username) <= 3` |
+| `test_birth_date_exact_today()` | True → error | `if birth_date >= today()` |
+| `test_success_path_user_creation()` | All conditions False | Positive path through all branches |
+
+---
+
+### Conclusion
+
+- Every decision in `create_user()` is evaluated for both **true** and **false** results.
+- All relevant decision branches are covered: simple and compound conditions, including `if` statements without `else`, and chained expressions (`if` + `elif`).
+- Inactive branches of loops are also tested (`for` + `return False`).
+
+---
+
+### Advantages
+
+- Complete logical coverage of critical decisions.
+- Combined with the tests from `test_user_manager.py` and `test_boundary.py`, this test suite provides a strong foundation for structural testing.
+
+---
+
+
+
+
+
 ### Why 100% Coverage Isn't Necessary
 
 The reported 80% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
