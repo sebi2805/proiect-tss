@@ -1,6 +1,6 @@
 # in case you name the venv folder differently, changed it here
 venv/
-
+.venv/
 # only for modules
 **/__pycache__/
 **/*.pyc
@@ -11,4 +11,5 @@ venv/
 
 .coverage
 
-.venv
+# optional: I think its a good idea to include in gitignore as it does not add any value to our project
+mutants/
