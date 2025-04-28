@@ -339,6 +339,23 @@ Helper functions tested separately:
 We applied Statement analisys on the `UserManager` class with a 98% statement coverage. The following Control Flow Graph has been created:
 [Lucid Chart](https://lucid.app/lucidchart/52e5e0a2-3c17-4dda-8930-4ef34498d4b7/edit?invitationId=inv_e62830fb-62b8-4810-9e4c-0ee0b0dc8ec7)
 
+To achieve statement coverage, we need to focus on the instructions controlled by conditions (corresponding to branches in the graph).
+
+For statement coverage testing, each instruction in the source code must be executed at least once during testing. This is considered the minimum coverage level that a structural test can achieve.
+
+The following table shows test inputs and the instructions they cover:
+
+| Test ID | Email | Username | Birth Date | Phone Number | Country | Expected Output | Lines Covered |
+|---------|-------|----------|------------|--------------|---------|-----------------|---------------|
+| 1 | valid@example.com | validuser | 1990-01-01 | +40 712345678 | Romania | 200, User successfully created | 36-37, 40-41, 43-44, 46-47, 49-50, 52-53, 55-56, 58-61 |
+| 2 | invalid-email | validuser | 1990-01-01 | +40 712345678 | Romania | 400, Invalid email | 36-37, 40-41, 43-45 |
+| 3 | existing@example.com | validuser | 1990-01-01 | +40 712345678 | Romania | 400, Email already exists | 36-37, 40-41, 43-44, 46-48 |
+| 4 | valid@example.com | ab | 1990-01-01 | +40 712345678 | Romania | 400, Username too short | 36-37, 40-41, 43-44, 46-47, 49-51 |
+| 5 | valid@example.com | thisusernameiswaytoolong | 1990-01-01 | +40 712345678 | Romania | 400, Username too long | 36-37, 40-41, 43-44, 46-47, 49-50, 52-54 |
+| 6 | valid@example.com | validuser | invalid-date | +40 712345678 | Romania | 400, Invalid birth date | 36, 38-39 |
+| 7 | valid@example.com | validuser | 2099-01-01 | +40 712345678 | Romania | 400, Birth date is in the future | 36-37, 40-42 |
+| 8 | valid@example.com | validuser | 1990-01-01 | +33 712345678 | Romania | 400, Phone number prefix does not match | 36-37, 40-41, 43-44, 46-47, 49-50, 52-53, 55-57 |
+
 ![Control Flow Graph Code](images/statement_analysis_code.png)
 
 ![Control Flow Graph](images/statement_analysis_graph.png)
