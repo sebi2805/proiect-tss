@@ -26,7 +26,7 @@ class UserManager:
             "Germany": "+49",
             "Italy": "+39",
             "Spain": "+34",
-            "Canada": "+1",
+            "Canada": "+5",
             "Australia": "+61",
             "India": "+91"
         }
