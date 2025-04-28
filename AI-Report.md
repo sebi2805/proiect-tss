@@ -920,23 +920,7 @@ def test_create_user_happy_path(um):
     assert any(u.email == "new@mail.com" for u in um.users)
 ```
 
-The AI-generated code has several issues:
-
-1. **Unnecessary complexity**: It adds extra imports like `re` and `freezegun` that aren't strictly necessary for conditional coverage testing.
-
-2. **Over-engineering**: The AI creates helper functions like `make_user()` that add complexity without providing significant benefits.
-
-3. **Inconsistent approach**: It mixes functional and procedural styles, making the code harder to follow.
-
-4. **Excessive documentation**: The AI adds verbose comments and docstrings that don't add value and make the code harder to read.
-
-5. **Missing test cases**: The AI's implementation doesn't include a test for the "email already exists" condition in the parametrized tests, which is a key condition to test.
-
-6. **Dependency on external libraries**: The AI uses `freezegun` for time manipulation, which adds an unnecessary dependency.
-
-7. **Redundant validation**: The AI adds an extra regex validation check in the email test that's not part of the original requirements.
-
-While the AI implementation does add an exception handling test that our implementation doesn't have, this is not strictly part of conditional coverage testing and could be added separately if needed.
+While the AI implementation does add an exception handling test that our implementation doesn't have, this is not strictly part of conditional coverage testing and could be added separately if needed it also added a new module that might make the project more bloated in the long run.
 
 Our implementation is more focused, cleaner, and directly tests each condition without unnecessary complexity or dependencies.
 
