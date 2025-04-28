@@ -527,6 +527,6 @@ src/UserManager.py      40      0     14      0   100%
 src/User.py              7      0      0      0   100%
 ------------------------------------------------------
 TOTAL                   47      0     14      0   100%
+```
 
-
-[![Video Preview](https://img.youtube.com/vi/Y59qTBrWnFo/0.jpg)](https://youtu.be/Y59qTBrWnFo)
+[![Watch the video](https://img.youtube.com/vi/Y59qTBrWnFo/hqdefault.jpg)](https://www.youtube.com/watch?v=Y59qTBrWnFo)
