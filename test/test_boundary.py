@@ -17,7 +17,7 @@ class TestUserManagerBoundary:
             birth_date_str="2003-02-26"
         )
         assert status == 400
-        assert "Username too short" in msg
+        assert "Username too short" == msg
 
     def test_boundary_username_min_valid(self):
         status, msg = self.um.create_user(
@@ -28,7 +28,7 @@ class TestUserManagerBoundary:
             birth_date_str="2003-02-26"
         )
         assert status == 200
-        assert "User successfully created" in msg
+        assert "User successfully created" == msg
 
     def test_boundary_username_max_valid(self):
         status, msg = self.um.create_user(
@@ -39,7 +39,7 @@ class TestUserManagerBoundary:
             birth_date_str="2003-02-26"
         )
         assert status == 200
-        assert "User successfully created" in msg
+        assert "User successfully created" == msg
 
     def test_boundary_username_max(self):
         status, msg = self.um.create_user(
@@ -50,7 +50,7 @@ class TestUserManagerBoundary:
             birth_date_str="2003-02-26"
         )
         assert status == 400
-        assert "Username too long" in msg
+        assert "Username too long" == msg
 
     def test_boundary_birth_date_min(self):
         today = datetime.today().strftime("%Y-%m-%d")
@@ -62,7 +62,7 @@ class TestUserManagerBoundary:
             birth_date_str=today  # Minimum invalid (today)
         )
         assert status == 400
-        assert "Birth date is in the future" in msg
+        assert "Birth date is in the future" == msg
 
     def test_boundary_birth_date_max(self):
         old_date = "1900-01-01"
@@ -74,7 +74,7 @@ class TestUserManagerBoundary:
             birth_date_str=old_date  # Extreme valid old date
         )
         assert status == 200
-        assert "User successfully created" in msg
+        assert "User successfully created" == msg
 
     def test_boundary_email_format(self):
         status, msg = self.um.create_user(
@@ -85,4 +85,4 @@ class TestUserManagerBoundary:
             birth_date_str="2003-02-26"
         )
         assert status == 200
-        assert "User successfully created" in msg
+        assert "User successfully created" == msg
