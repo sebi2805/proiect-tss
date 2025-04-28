@@ -253,6 +253,22 @@ TOTAL                   47      8    83%
 
 [![Video Preview](https://img.youtube.com/vi/Ai9dJchoAgs/0.jpg)](https://youtu.be/Ai9dJchoAgs)
 
+
+
+---
+
+### Why 100% Coverage Isn't Necessary
+
+The reported 80% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
+
+Since our goal was to validate boundary conditions, achieving 100% coverage is not strictly necessary. Instead, our focus is on ensuring that key input constraints are thoroughly tested, which our boundary tests accomplish effectively.
+
+We validated that extreme and edge-case inputs are properly handled. Although we achieved 80% coverage, our tests sufficiently address critical boundary conditions, ensuring robust user validation.
+
+---
+
+
+
 ## Decision Coverage
 
 **Purpose:** To verify the application’s behavior at critical decision points (if statements, loops, logical expressions), ensuring that all possible branches (true / false) are tested at least once.
@@ -314,18 +330,9 @@ Helper functions tested separately:
 ---
 
 
+[![Video Preview](https://img.youtube.com/vi/qhdAivN3ZgI/0.jpg)](https://youtu.be/qhdAivN3ZgI)
 
 
-
-### Why 100% Coverage Isn't Necessary
-
-The reported 80% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
-
-Since our goal was to validate boundary conditions, achieving 100% coverage is not strictly necessary. Instead, our focus is on ensuring that key input constraints are thoroughly tested, which our boundary tests accomplish effectively.
-
-We validated that extreme and edge-case inputs are properly handled. Although we achieved 80% coverage, our tests sufficiently address critical boundary conditions, ensuring robust user validation.
-
----
 
 ## Statement Analysis
 
