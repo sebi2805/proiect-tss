@@ -568,3 +568,53 @@ TOTAL                   47      0   100%
 ```
 
 [![Video Preview](https://img.youtube.com/vi/vAOG3gtxtfs/0.jpg)](https://youtu.be/vAOG3gtxtfs)
+
+
+## Condition Coverage Analysis
+
+### Why Condition Coverage?
+Condition coverage forces **every atomic Boolean operand** inside every decision to evaluate
+to both `True` and `False` at least once.  
+This satisfies the *condition coverage.* criterions.
+
+### Decision points in `UserManager`
+
+| # | Location / predicate                                                   | Atomic conditions flipped |
+|---|------------------------------------------------------------------------|---------------------------|
+| 1 | `try/except` around `datetime.strptime`                                | *raises* / *does-not-raise* |
+| 2 | `if birth_date >= today:`                                              | `birth_date >= today` |
+| 3 | `if not self.validate_email(email):`                                   | `validate_email(email)` |
+| 4 | `if self.email_exists(email):`                                         | `email_exists(email)` |
+| 5 | `if len(username) < 4:`                                                | `len(username) < 4` |
+| 6 | `elif len(username) > 20:`                                             | `len(username) > 20` |
+| 7 | `if not self.validate_phone_prefix(phone_number, country):`            | `validate_phone_prefix(phone_number, country)` |
+
+### Mapping tests → atomic conditions
+
+| Predicate ID | **True** exercised by                          | **False** exercised by            |
+|--------------|------------------------------------------------|-----------------------------------|
+| 1            | CU2 (invalid date format)                      | all other CU* cases               |
+| 2            | CU3 (future date)                              | CU1, CU4-CU9                      |
+| 3            | CU1 (invalid email)                            | CU2-CU9, VE1 helper test          |
+| 4            | CU8 (duplicate email) & E1 helper test         | all non-duplicate scenarios       |
+| 5            | CU4 (username too short)                       | everything else                   |
+| 6            | CU5 (username too long)                        | everything else                   |
+| 7            | CU6 & CU7, VP2/VP3 helper tests                | CU1-CU5, CU8-CU9, VP1             |
+
+### Achieved coverage
+
+Run the suite with branch tracking enabled:
+
+```bash
+pytest --cov=src --cov-branch --cov-report=term-missing
+
+
+Name                 Stmts   Miss Branch BrPart  Cover
+------------------------------------------------------
+src/UserManager.py      40      0     14      0   100%
+src/User.py              7      0      0      0   100%
+------------------------------------------------------
+TOTAL                   47      0     14      0   100%
+
+
+[![Video Preview](https://img.youtube.com/vi/Y59qTBrWnFo/0.jpg)](https://youtu.be/Y59qTBrWnFo)
