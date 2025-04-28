@@ -1,0 +1,569 @@
+<html><body><h1>src/UserManager.py</h1>Killed 5 out of 56 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 3</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -10,7 +10,7 @@
+     def email_exists(self, email):
+         for user in self.users:
+             if user.email == email:
+-                return True
++                return False
+         return False
+ 
+     def validate_email(self, email):
+</pre><h3>Mutant 10</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -20,7 +20,7 @@
+     def validate_phone_prefix(self, phone_number, country):
+         country_codes = {
+             "Romania": "+40",
+-            "USA": "+1",
++            "XXUSAXX": "+1",
+             "UK": "+44",
+             "France": "+33",
+             "Germany": "+49",
+</pre><h3>Mutant 11</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -20,7 +20,7 @@
+     def validate_phone_prefix(self, phone_number, country):
+         country_codes = {
+             "Romania": "+40",
+-            "USA": "+1",
++            "USA": "XX+1XX",
+             "UK": "+44",
+             "France": "+33",
+             "Germany": "+49",
+</pre><h3>Mutant 12</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -21,7 +21,7 @@
+         country_codes = {
+             "Romania": "+40",
+             "USA": "+1",
+-            "UK": "+44",
++            "XXUKXX": "+44",
+             "France": "+33",
+             "Germany": "+49",
+             "Italy": "+39",
+</pre><h3>Mutant 13</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -21,7 +21,7 @@
+         country_codes = {
+             "Romania": "+40",
+             "USA": "+1",
+-            "UK": "+44",
++            "UK": "XX+44XX",
+             "France": "+33",
+             "Germany": "+49",
+             "Italy": "+39",
+</pre><h3>Mutant 14</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -22,7 +22,7 @@
+             "Romania": "+40",
+             "USA": "+1",
+             "UK": "+44",
+-            "France": "+33",
++            "XXFranceXX": "+33",
+             "Germany": "+49",
+             "Italy": "+39",
+             "Spain": "+34",
+</pre><h3>Mutant 15</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -22,7 +22,7 @@
+             "Romania": "+40",
+             "USA": "+1",
+             "UK": "+44",
+-            "France": "+33",
++            "France": "XX+33XX",
+             "Germany": "+49",
+             "Italy": "+39",
+             "Spain": "+34",
+</pre><h3>Mutant 16</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -23,7 +23,7 @@
+             "USA": "+1",
+             "UK": "+44",
+             "France": "+33",
+-            "Germany": "+49",
++            "XXGermanyXX": "+49",
+             "Italy": "+39",
+             "Spain": "+34",
+             "Canada": "+5",
+</pre><h3>Mutant 17</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -23,7 +23,7 @@
+             "USA": "+1",
+             "UK": "+44",
+             "France": "+33",
+-            "Germany": "+49",
++            "Germany": "XX+49XX",
+             "Italy": "+39",
+             "Spain": "+34",
+             "Canada": "+5",
+</pre><h3>Mutant 18</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -24,7 +24,7 @@
+             "UK": "+44",
+             "France": "+33",
+             "Germany": "+49",
+-            "Italy": "+39",
++            "XXItalyXX": "+39",
+             "Spain": "+34",
+             "Canada": "+5",
+             "Australia": "+61",
+</pre><h3>Mutant 19</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -24,7 +24,7 @@
+             "UK": "+44",
+             "France": "+33",
+             "Germany": "+49",
+-            "Italy": "+39",
++            "Italy": "XX+39XX",
+             "Spain": "+34",
+             "Canada": "+5",
+             "Australia": "+61",
+</pre><h3>Mutant 20</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -25,7 +25,7 @@
+             "France": "+33",
+             "Germany": "+49",
+             "Italy": "+39",
+-            "Spain": "+34",
++            "XXSpainXX": "+34",
+             "Canada": "+5",
+             "Australia": "+61",
+             "India": "+91"
+</pre><h3>Mutant 21</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -25,7 +25,7 @@
+             "France": "+33",
+             "Germany": "+49",
+             "Italy": "+39",
+-            "Spain": "+34",
++            "Spain": "XX+34XX",
+             "Canada": "+5",
+             "Australia": "+61",
+             "India": "+91"
+</pre><h3>Mutant 24</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -27,7 +27,7 @@
+             "Italy": "+39",
+             "Spain": "+34",
+             "Canada": "+5",
+-            "Australia": "+61",
++            "XXAustraliaXX": "+61",
+             "India": "+91"
+         }
+ 
+</pre><h3>Mutant 25</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -27,7 +27,7 @@
+             "Italy": "+39",
+             "Spain": "+34",
+             "Canada": "+5",
+-            "Australia": "+61",
++            "Australia": "XX+61XX",
+             "India": "+91"
+         }
+ 
+</pre><h3>Mutant 26</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -28,7 +28,7 @@
+             "Spain": "+34",
+             "Canada": "+5",
+             "Australia": "+61",
+-            "India": "+91"
++            "XXIndiaXX": "+91"
+         }
+ 
+         for c, prefix in country_codes.items():
+</pre><h3>Mutant 27</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -28,7 +28,7 @@
+             "Spain": "+34",
+             "Canada": "+5",
+             "Australia": "+61",
+-            "India": "+91"
++            "India": "XX+91XX"
+         }
+ 
+         for c, prefix in country_codes.items():
+</pre><h3>Mutant 34</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -41,7 +41,7 @@
+         try:
+             birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d").date()
+         except ValueError:
+-            return 400, "Invalid birth date"
++            return 400, "XXInvalid birth dateXX"
+ 
+         if birth_date >= datetime.today().date():
+             return 400, "Birth date is in the future"
+</pre><h3>Mutant 37</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -44,7 +44,7 @@
+             return 400, "Invalid birth date"
+ 
+         if birth_date >= datetime.today().date():
+-            return 400, "Birth date is in the future"
++            return 400, "XXBirth date is in the futureXX"
+ 
+         if not self.validate_email(email):
+             return 400, "Invalid email"
+</pre><h3>Mutant 40</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -47,7 +47,7 @@
+             return 400, "Birth date is in the future"
+ 
+         if not self.validate_email(email):
+-            return 400, "Invalid email"
++            return 400, "XXInvalid emailXX"
+ 
+         if self.email_exists(email):
+             return 400, "Email already exists"
+</pre><h3>Mutant 41</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -50,7 +50,7 @@
+             return 400, "Invalid email"
+ 
+         if self.email_exists(email):
+-            return 400, "Email already exists"
++            return 401, "Email already exists"
+ 
+         if len(username) <= 3:
+             return 400, "Username too short"
+</pre><h3>Mutant 42</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -50,7 +50,7 @@
+             return 400, "Invalid email"
+ 
+         if self.email_exists(email):
+-            return 400, "Email already exists"
++            return 400, "XXEmail already existsXX"
+ 
+         if len(username) <= 3:
+             return 400, "Username too short"
+</pre><h3>Mutant 46</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -53,7 +53,7 @@
+             return 400, "Email already exists"
+ 
+         if len(username) <= 3:
+-            return 400, "Username too short"
++            return 400, "XXUsername too shortXX"
+         
+         if len(username) >= 20:
+             return 400, "Username too long"
+</pre><h3>Mutant 50</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -56,7 +56,7 @@
+             return 400, "Username too short"
+         
+         if len(username) >= 20:
+-            return 400, "Username too long"
++            return 400, "XXUsername too longXX"
+ 
+         if not self.validate_phone_prefix(phone_number, country):
+             return 400, "Phone number prefix does not match the country"
+</pre><h3>Mutant 53</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -59,7 +59,7 @@
+             return 400, "Username too long"
+ 
+         if not self.validate_phone_prefix(phone_number, country):
+-            return 400, "Phone number prefix does not match the country"
++            return 400, "XXPhone number prefix does not match the countryXX"
+ 
+         new_user = User(email, username, country, phone_number, birth_date)
+         self.users.append(new_user)
+</pre><h2>Suspicious</h2>Mutants that made the test suite take longer, but otherwise seemed ok<h3>Mutant 1</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -5,7 +5,7 @@
+ 
+ class UserManager:
+     def __init__(self):
+-        self.users = []
++        self.users = None
+ 
+     def email_exists(self, email):
+         for user in self.users:
+</pre><h3>Mutant 4</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -11,7 +11,7 @@
+         for user in self.users:
+             if user.email == email:
+                 return True
+-        return False
++        return True
+ 
+     def validate_email(self, email):
+         pattern = r"[^@]+@[^@]+\.[^@]+"
+</pre><h3>Mutant 5</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -14,7 +14,7 @@
+         return False
+ 
+     def validate_email(self, email):
+-        pattern = r"[^@]+@[^@]+\.[^@]+"
++        pattern = r"XX[^@]+@[^@]+\.[^@]+XX"
+         return re.match(pattern, email) is not None
+ 
+     def validate_phone_prefix(self, phone_number, country):
+</pre><h3>Mutant 6</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -14,7 +14,7 @@
+         return False
+ 
+     def validate_email(self, email):
+-        pattern = r"[^@]+@[^@]+\.[^@]+"
++        pattern = None
+         return re.match(pattern, email) is not None
+ 
+     def validate_phone_prefix(self, phone_number, country):
+</pre><h3>Mutant 7</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -15,7 +15,7 @@
+ 
+     def validate_email(self, email):
+         pattern = r"[^@]+@[^@]+\.[^@]+"
+-        return re.match(pattern, email) is not None
++        return re.match(pattern, email) is  None
+ 
+     def validate_phone_prefix(self, phone_number, country):
+         country_codes = {
+</pre><h3>Mutant 8</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -19,7 +19,7 @@
+ 
+     def validate_phone_prefix(self, phone_number, country):
+         country_codes = {
+-            "Romania": "+40",
++            "XXRomaniaXX": "+40",
+             "USA": "+1",
+             "UK": "+44",
+             "France": "+33",
+</pre><h3>Mutant 9</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -19,7 +19,7 @@
+ 
+     def validate_phone_prefix(self, phone_number, country):
+         country_codes = {
+-            "Romania": "+40",
++            "Romania": "XX+40XX",
+             "USA": "+1",
+             "UK": "+44",
+             "France": "+33",
+</pre><h3>Mutant 22</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -26,7 +26,7 @@
+             "Germany": "+49",
+             "Italy": "+39",
+             "Spain": "+34",
+-            "Canada": "+5",
++            "XXCanadaXX": "+5",
+             "Australia": "+61",
+             "India": "+91"
+         }
+</pre><h3>Mutant 23</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -26,7 +26,7 @@
+             "Germany": "+49",
+             "Italy": "+39",
+             "Spain": "+34",
+-            "Canada": "+5",
++            "Canada": "XX+5XX",
+             "Australia": "+61",
+             "India": "+91"
+         }
+</pre><h3>Mutant 28</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -18,18 +18,7 @@
+         return re.match(pattern, email) is not None
+ 
+     def validate_phone_prefix(self, phone_number, country):
+-        country_codes = {
+-            "Romania": "+40",
+-            "USA": "+1",
+-            "UK": "+44",
+-            "France": "+33",
+-            "Germany": "+49",
+-            "Italy": "+39",
+-            "Spain": "+34",
+-            "Canada": "+5",
+-            "Australia": "+61",
+-            "India": "+91"
+-        }
++        country_codes = None
+ 
+         for c, prefix in country_codes.items():
+             if phone_number.startswith(prefix):
+</pre><h3>Mutant 29</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -33,7 +33,7 @@
+ 
+         for c, prefix in country_codes.items():
+             if phone_number.startswith(prefix):
+-                return country == c
++                return country != c
+ 
+         return False
+     
+</pre><h3>Mutant 31</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -39,7 +39,7 @@
+     
+     def create_user(self, email, username, country, phone_number, birth_date_str):
+         try:
+-            birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d").date()
++            birth_date = datetime.strptime(birth_date_str, "XX%Y-%m-%dXX").date()
+         except ValueError:
+             return 400, "Invalid birth date"
+ 
+</pre><h3>Mutant 32</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -39,7 +39,7 @@
+     
+     def create_user(self, email, username, country, phone_number, birth_date_str):
+         try:
+-            birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d").date()
++            birth_date = None
+         except ValueError:
+             return 400, "Invalid birth date"
+ 
+</pre><h3>Mutant 35</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -43,7 +43,7 @@
+         except ValueError:
+             return 400, "Invalid birth date"
+ 
+-        if birth_date >= datetime.today().date():
++        if birth_date > datetime.today().date():
+             return 400, "Birth date is in the future"
+ 
+         if not self.validate_email(email):
+</pre><h3>Mutant 36</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -44,7 +44,7 @@
+             return 400, "Invalid birth date"
+ 
+         if birth_date >= datetime.today().date():
+-            return 400, "Birth date is in the future"
++            return 401, "Birth date is in the future"
+ 
+         if not self.validate_email(email):
+             return 400, "Invalid email"
+</pre><h3>Mutant 38</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -46,7 +46,7 @@
+         if birth_date >= datetime.today().date():
+             return 400, "Birth date is in the future"
+ 
+-        if not self.validate_email(email):
++        if  self.validate_email(email):
+             return 400, "Invalid email"
+ 
+         if self.email_exists(email):
+</pre><h3>Mutant 39</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -47,7 +47,7 @@
+             return 400, "Birth date is in the future"
+ 
+         if not self.validate_email(email):
+-            return 400, "Invalid email"
++            return 401, "Invalid email"
+ 
+         if self.email_exists(email):
+             return 400, "Email already exists"
+</pre><h3>Mutant 44</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -52,7 +52,7 @@
+         if self.email_exists(email):
+             return 400, "Email already exists"
+ 
+-        if len(username) <= 3:
++        if len(username) <= 4:
+             return 400, "Username too short"
+         
+         if len(username) >= 20:
+</pre><h3>Mutant 45</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -53,7 +53,7 @@
+             return 400, "Email already exists"
+ 
+         if len(username) <= 3:
+-            return 400, "Username too short"
++            return 401, "Username too short"
+         
+         if len(username) >= 20:
+             return 400, "Username too long"
+</pre><h3>Mutant 48</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -55,7 +55,7 @@
+         if len(username) <= 3:
+             return 400, "Username too short"
+         
+-        if len(username) >= 20:
++        if len(username) >= 21:
+             return 400, "Username too long"
+ 
+         if not self.validate_phone_prefix(phone_number, country):
+</pre><h3>Mutant 49</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -56,7 +56,7 @@
+             return 400, "Username too short"
+         
+         if len(username) >= 20:
+-            return 400, "Username too long"
++            return 401, "Username too long"
+ 
+         if not self.validate_phone_prefix(phone_number, country):
+             return 400, "Phone number prefix does not match the country"
+</pre><h3>Mutant 51</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -58,7 +58,7 @@
+         if len(username) >= 20:
+             return 400, "Username too long"
+ 
+-        if not self.validate_phone_prefix(phone_number, country):
++        if  self.validate_phone_prefix(phone_number, country):
+             return 400, "Phone number prefix does not match the country"
+ 
+         new_user = User(email, username, country, phone_number, birth_date)
+</pre><h3>Mutant 52</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -59,7 +59,7 @@
+             return 400, "Username too long"
+ 
+         if not self.validate_phone_prefix(phone_number, country):
+-            return 400, "Phone number prefix does not match the country"
++            return 401, "Phone number prefix does not match the country"
+ 
+         new_user = User(email, username, country, phone_number, birth_date)
+         self.users.append(new_user)
+</pre><h3>Mutant 54</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -61,7 +61,7 @@
+         if not self.validate_phone_prefix(phone_number, country):
+             return 400, "Phone number prefix does not match the country"
+ 
+-        new_user = User(email, username, country, phone_number, birth_date)
++        new_user = None
+         self.users.append(new_user)
+         return 200, "User successfully created"
+ 
+</pre><h3>Mutant 55</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -63,5 +63,5 @@
+ 
+         new_user = User(email, username, country, phone_number, birth_date)
+         self.users.append(new_user)
+-        return 200, "User successfully created"
++        return 201, "User successfully created"
+ 
+</pre><h3>Mutant 56</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -63,5 +63,5 @@
+ 
+         new_user = User(email, username, country, phone_number, birth_date)
+         self.users.append(new_user)
+-        return 200, "User successfully created"
++        return 200, "XXUser successfully createdXX"
+ 
+</pre></body></html>

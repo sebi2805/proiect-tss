@@ -253,6 +253,10 @@ TOTAL                   47      8    83%
 
 [![Video Preview](https://img.youtube.com/vi/Ai9dJchoAgs/0.jpg)](https://youtu.be/Ai9dJchoAgs)
 
+
+
+---
+
 ### Why 100% Coverage Isn't Necessary
 
 The reported 80% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
@@ -263,10 +267,94 @@ We validated that extreme and edge-case inputs are properly handled. Although we
 
 ---
 
+
+
+## Decision Coverage
+
+**Purpose:** To verify the application’s behavior at critical decision points (if statements, loops, logical expressions), ensuring that all possible branches (true / false) are tested at least once.
+
+---
+
+### Analyzed Code: `create_user` from `UserManager.py`
+
+This function includes several decisions that must be covered to guarantee robust behavior:
+
+| # | Decision Statement | Type | Description |
+|--|---------------------|------|-------------|
+| 1 | `if birth_date >= datetime.today()` | simple if | Checks if the birth date is in the future |
+| 2 | `if not self.validate_email(email)` | simple if | Validates email format |
+| 3 | `if self.email_exists(email)` | if without else | Checks if the email is already used |
+| 4 | `if len(username) <= 3` / `elif len(username) >= 20` | if with else | Checks username length |
+| 5 | `if not self.validate_phone_prefix(...)` | simple if | Checks phone prefix-country match |
+
+Helper functions tested separately:
+- `email_exists()` – contains a `for` + `if`
+- `validate_phone_prefix()` – contains a `for` + `if` + `return`
+
+---
+
+### Loops and Decisions Covered
+
+| Location | Loop Type | Behavior Tested |
+|----------|-----------|------------------|
+| `for user in self.users:` | `for` loop in `email_exists()` | Tests case where email does not match any existing user |
+| `for c, prefix in country_codes.items():` | `for` loop in `validate_phone_prefix()` | Tests case where prefix doesn't match (triggers fallback logic) |
+
+---
+
+### Implemented Tests: `test_decision_coverage.py`
+
+| Test | Branch Tested | Target Decision |
+|------|---------------|-----------------|
+| `test_email_exists_with_non_matching_email()` | False | `email_exists()` |
+| `test_validate_phone_prefix_no_match()` | False | `validate_phone_prefix()` |
+| `test_username_exactly_3_characters()` | True → error | `if len(username) <= 3` |
+| `test_birth_date_exact_today()` | True → error | `if birth_date >= today()` |
+| `test_success_path_user_creation()` | All conditions False | Positive path through all branches |
+
+---
+
+### Conclusion
+
+- Every decision in `create_user()` is evaluated for both **true** and **false** results.
+- All relevant decision branches are covered: simple and compound conditions, including `if` statements without `else`, and chained expressions (`if` + `elif`).
+- Inactive branches of loops are also tested (`for` + `return False`).
+
+---
+
+### Advantages
+
+- Complete logical coverage of critical decisions.
+- Combined with the tests from `test_user_manager.py` and `test_boundary.py`, this test suite provides a strong foundation for structural testing.
+
+---
+
+
+[![Video Preview](https://img.youtube.com/vi/qhdAivN3ZgI/0.jpg)](https://youtu.be/qhdAivN3ZgI)
+
+
+
 ## Statement Analysis
 
 We applied Statement analisys on the `UserManager` class with a 98% statement coverage. The following Control Flow Graph has been created:
 [Lucid Chart](https://lucid.app/lucidchart/52e5e0a2-3c17-4dda-8930-4ef34498d4b7/edit?invitationId=inv_e62830fb-62b8-4810-9e4c-0ee0b0dc8ec7)
+
+To achieve statement coverage, we need to focus on the instructions controlled by conditions (corresponding to branches in the graph).
+
+For statement coverage testing, each instruction in the source code must be executed at least once during testing. This is considered the minimum coverage level that a structural test can achieve.
+
+The following table shows test inputs and the instructions they cover:
+
+| Test ID | Email | Username | Birth Date | Phone Number | Country | Expected Output | Lines Covered |
+|---------|-------|----------|------------|--------------|---------|-----------------|---------------|
+| 1 | valid@example.com | validuser | 1990-01-01 | +40 712345678 | Romania | 200, User successfully created | 36-37, 40-41, 43-44, 46-47, 49-50, 52-53, 55-56, 58-61 |
+| 2 | invalid-email | validuser | 1990-01-01 | +40 712345678 | Romania | 400, Invalid email | 36-37, 40-41, 43-45 |
+| 3 | existing@example.com | validuser | 1990-01-01 | +40 712345678 | Romania | 400, Email already exists | 36-37, 40-41, 43-44, 46-48 |
+| 4 | valid@example.com | ab | 1990-01-01 | +40 712345678 | Romania | 400, Username too short | 36-37, 40-41, 43-44, 46-47, 49-51 |
+| 5 | valid@example.com | thisusernameiswaytoolong | 1990-01-01 | +40 712345678 | Romania | 400, Username too long | 36-37, 40-41, 43-44, 46-47, 49-50, 52-54 |
+| 6 | valid@example.com | validuser | invalid-date | +40 712345678 | Romania | 400, Invalid birth date | 36, 38-39 |
+| 7 | valid@example.com | validuser | 2099-01-01 | +40 712345678 | Romania | 400, Birth date is in the future | 36-37, 40-42 |
+| 8 | valid@example.com | validuser | 1990-01-01 | +33 712345678 | Romania | 400, Phone number prefix does not match | 36-37, 40-41, 43-44, 46-47, 49-50, 52-53, 55-57 |
 
 ![Control Flow Graph Code](images/statement_analysis_code.png)
 

@@ -1,0 +1,34 @@
+<html><body><h1>src/UserManager.py</h1>Killed 53 out of 56 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 3</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -10,7 +10,7 @@
+     def email_exists(self, email):
+         for user in self.users:
+             if user.email == email:
+-                return True
++                return False
+         return False
+ 
+     def validate_email(self, email):
+</pre><h3>Mutant 41</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -50,7 +50,7 @@
+             return 400, "Invalid email"
+ 
+         if self.email_exists(email):
+-            return 400, "Email already exists"
++            return 401, "Email already exists"
+ 
+         if len(username) <= 3:
+             return 400, "Username too short"
+</pre><h3>Mutant 42</h3><pre>--- src/UserManager.py
++++ src/UserManager.py
+@@ -50,7 +50,7 @@
+             return 400, "Invalid email"
+ 
+         if self.email_exists(email):
+-            return 400, "Email already exists"
++            return 400, "XXEmail already existsXX"
+ 
+         if len(username) <= 3:
+             return 400, "Username too short"
+</pre></body></html>

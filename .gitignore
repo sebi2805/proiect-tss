@@ -11,5 +11,9 @@ venv/
 
 .coverage
 
+.venv
+
+
 # optional: I think its a good idea to include in gitignore as it does not add any value to our project
 mutants/
+.mutmut-cache
