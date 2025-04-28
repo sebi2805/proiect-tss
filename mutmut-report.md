@@ -98,7 +98,8 @@ The next surviving mutant was:
 
 To cover that case I added:
 
-```
+```python
+
 def test_phone_prefix(self):
     status, msg = self.um.create_user(
         email="country.doe@example.com",
@@ -111,4 +112,44 @@ def test_phone_prefix(self):
     assert msg == "Phone number prefix does not match the country"
 ```
 
-After adjusting the code (removing the in operator and fixing prefix logic), we reached 53/56 mutants killed, with only 3 still surviving and the status being suspicious.
+## Third Run Results
+
+```bash
+(.venv) sebi@DESKTOP-G5GBQBL:/mnt/c/Users/User/Desktop/university/proiect-tss$ mutmut show 3
+```
+
+```python
+--- src/UserManager.py
++++ src/UserManager.py
+@@ -10,7 +10,7 @@
+     def email_exists(self, email):
+         for user in self.users:
+             if user.email == email:
+-                return True
++                return False
+         return False
+
+     def validate_email(self, email):
+
+    def test_email_already_exists(self):
+        status, msg = self.um.create_user(
+            email="existing.user@example.com",
+            username="existinguser",
+            birth_date_str="1990-05-10",
+            phone_number="+40 712345678",
+            country="Romania"
+        )
+        assert status == 200
+
+        status, msg = self.um.create_user(
+            email="existing.user@example.com",
+            username="newuser",
+            birth_date_str="1992-08-20",
+            phone_number="+40 712345679",
+            country="Romania"
+        )
+        assert status == 400
+        assert "Email already exists" == msg
+```
+
+After adjusting the code (removing the in operator and fixing prefix logic), we reached 56/56 mutants killed.

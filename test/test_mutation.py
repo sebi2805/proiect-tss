@@ -41,3 +41,23 @@ class TestMutationAdditonal:
         )
         assert status == 400
         assert "Phone number prefix does not match the country" == msg
+
+    def test_email_already_exists(self):
+        status, msg = self.um.create_user(
+            email="existing.user@example.com",
+            username="existinguser",
+            birth_date_str="1990-05-10",
+            phone_number="+40 712345678",
+            country="Romania"
+        )
+        assert status == 200
+
+        status, msg = self.um.create_user(
+            email="existing.user@example.com",
+            username="newuser",
+            birth_date_str="1992-08-20",
+            phone_number="+40 712345679",
+            country="Romania"
+        )
+        assert status == 400
+        assert "Email already exists" == msg

@@ -31,7 +31,7 @@ class TestUserManagerDecisionCoverage:
             birth_date_str="1990-01-01"
         )
         assert status == 400
-        assert "Username too short" in msg
+        assert "Username too short" == msg
 
     def test_birth_date_exact_today(self):
         from datetime import datetime
@@ -44,7 +44,7 @@ class TestUserManagerDecisionCoverage:
             birth_date_str=today_str
         )
         assert status == 400
-        assert "Birth date is in the future" in msg
+        assert "Birth date is in the future" == msg
 
     def test_success_path_user_creation(self):
         status, msg = self.um.create_user(
