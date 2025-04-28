@@ -634,3 +634,294 @@ The AI-generated code is missing the test for the phone number that doesn't matc
 We can conclude that, in this case, the AI-generated code didn't compute correctly the cyclomatic complexity of the code and it didn't cover all the paths, but it was close to it.
 
 ---
+
+## Conditional Coverage Analysis
+
+### Our code
+
+Our conditional coverage tests focus on testing each predicate in the UserManager class to ensure both true and false outcomes are tested:
+
+```python
+class TestUserManagerConditionCoverage:
+    """Condition coverage - each predicate T / F."""
+
+    @pytest.fixture(autouse=True)
+    def _setup_manager(self):
+        self.um = UserManager()
+
+    @pytest.mark.parametrize(
+        "preload, probe, expected",
+        [
+            # E1: already exists (condition True)
+            (["exists@example.com"], "exists@example.com", True),
+            # E2: does not exist (condition False)
+            ([], "ghost@example.com", False),
+        ],
+    )
+    def test_email_exists_condition(self, preload, probe, expected):
+        for mail in preload:
+            self.um.users.append(
+                User(mail, "u", "Romania", "+40123456789", datetime(2000, 1, 1).date())
+            )
+        assert self.um.email_exists(probe) is expected
+
+    @pytest.mark.parametrize(
+        "email, expected",
+        [
+            # VE1: correct format
+            ("good@mail.com", True),
+            # VE2: incorrect format
+            ("badmail", False),
+        ],
+    )
+    def test_validate_email_condition(self, email, expected):
+        assert self.um.validate_email(email) is expected
+
+    @pytest.mark.parametrize(
+        "phone, country, expected",
+        [
+            # VP1: prefix +40 & country RO  (True ∧ True)
+            ("+40123456789", "Romania", True),
+            # VP2: prefix +40 but country DE (True ∧ False)
+            ("+40123456789", "Germany", False),
+            # VP3: unknown prefix        (False ∧ _ )
+            ("123456", "Romania", False),
+        ],
+    )
+    def test_validate_phone_prefix_conditions(self, phone, country, expected):
+        assert self.um.validate_phone_prefix(phone, country) is expected
+
+    @pytest.mark.parametrize(
+        "email, username, country, phone, bdate, exp_status, exp_msg",
+        [
+            # CU1 – invalid email (validate_email == False)
+            ("badmail", "validuser", "Romania", "+40123456789", "2000-01-01",
+             400, "Invalid email"),
+
+            # CU2 – invalid date (format)
+            ("ok@mail.com", "validuser", "Romania", "+40123456789", "not-a-date",
+             400, "Invalid birth date"),
+
+            # CU3 – date in the future
+            ("ok@mail.com", "validuser", "Romania", "+40123456789",
+             (datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d"),
+             400, "Birth date is in the future"),
+
+            # CU4 – username too short
+            ("u1@mail.com", "usr", "Romania", "+40123456789", "2000-01-01",
+             400, "Username too short"),
+
+            # CU5 – username too long
+            ("u2@mail.com", "u" * 21, "Romania", "+40123456789", "2000-01-01",
+             400, "Username too long"),
+
+            # CU6 – prefix does not match the country
+            ("u3@mail.com", "validuser", "Germany", "+40123456789", "2000-01-01",
+             400, "Phone number prefix does not match the country"),
+
+            # CU7 – completely unknown prefix
+            ("u4@mail.com", "validuser", "Romania", "12345678", "2000-01-01",
+             400, "Phone number prefix does not match the country"),
+
+            # CU8 – email already exists
+            ("dup@mail.com", "validuser", "Romania", "+40123456789", "2000-01-01",
+             400, "Email already exists"),
+
+            # CU9 – happy-path, everything valid
+            ("new@mail.com", "validuser", "Romania", "+40123456789", "2000-01-01",
+             200, "User successfully created"),
+        ],
+    )
+    def test_create_user_conditions(self, email, username, country,
+                                    phone, bdate, exp_status, exp_msg):
+        # pre-populate for the duplicate-mail scenario
+        if exp_msg == "Email already exists":
+            self.um.users.append(
+                User(email, "old", country, phone, datetime(1990, 1, 1).date())
+            )
+
+        status, msg = self.um.create_user(
+            email=email,
+            username=username,
+            country=country,
+            phone_number=phone,
+            birth_date_str=bdate,
+        )
+
+        assert status == exp_status
+        assert exp_msg in msg
+
+        # check persisted effect in the CU9 scenario
+        if exp_status == 200:
+            assert any(u.email == email for u in self.um.users)
+```
+
+Our implementation is clean, focused, and directly tests each condition in the UserManager class. We use a class-based approach with clear test names that indicate the purpose of each test. The tests are organized in a logical way, with each test focusing on a specific condition.
+
+### AI-generated code
+
+The AI-generated conditional coverage tests take a different approach:
+
+```python
+import re
+from datetime import date, timedelta
+
+import pytest
+from freezegun import freeze_time
+
+from src.UserManager import UserManager
+from src.User import User
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+EMAIL_RE = re.compile(r"[^@]+@[^@]+\.[^@]+")
+
+
+def make_user(email="u@mail.com",
+              username="user",
+              country="Romania",
+              phone="+40123456789",
+              born=date(2000, 1, 1)):
+    """Factory for quickly creating User instances in tests."""
+    return User(email, username, country, phone, born)
+
+
+@pytest.fixture()
+def um() -> UserManager:
+    """Provide a *fresh* UserManager for every test."""
+    return UserManager()
+
+
+# ---------------------------------------------------------------------------
+# Unit tests
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize(
+    "preloaded, probe, expected",
+    [
+        pytest.param(["exists@mail.com"], "exists@mail.com", True,  id="email-exists"),
+        pytest.param([],                  "ghost@mail.com",  False, id="email-missing"),
+    ],
+)
+def test_email_exists(um, preloaded, probe, expected):
+    um.users.extend(make_user(m) for m in preloaded)
+    assert um.email_exists(probe) is expected
+
+
+@pytest.mark.parametrize(
+    "candidate, expected",
+    [
+        pytest.param("good@mail.com", True,  id="valid"),
+        pytest.param("badmail",       False, id="no-at-sign"),
+    ],
+)
+def test_validate_email(um, candidate, expected):
+    assert um.validate_email(candidate) is expected
+    # Quick sanity-check of the regex itself
+    if expected:
+        assert EMAIL_RE.fullmatch(candidate)
+
+
+@pytest.mark.parametrize(
+    "phone, country, ok",
+    [
+        pytest.param("+40123456789", "Romania",  True,  id="ro-matching-prefix"),
+        pytest.param("+40123456789", "Germany",  False, id="prefix-country-mismatch"),
+        pytest.param("123456",       "Romania",  False, id="unknown-prefix"),
+    ],
+)
+def test_validate_phone_prefix(um, phone, country, ok):
+    assert um.validate_phone_prefix(phone, country) is ok
+
+
+# ---------------------------------------------------------------------------
+# create_user high-level contract
+# ---------------------------------------------------------------------------
+
+# *Error* scenarios first ----------------------------------------------------
+
+INVALID_CREATE_PARAMS = [
+    pytest.param("badmail", "validuser", "Romania", "+40123456789", "2000-01-01",
+                 400, "Invalid email",                           id="invalid-email"),
+
+    pytest.param("ok@mail.com", "validuser", "Romania", "+40123456789", "not-a-date",
+                 400, "Invalid birth date",                       id="invalid-date-format"),
+
+    # Freeze clock so "future" is stable.
+    pytest.param("ok@mail.com", "validuser", "Romania", "+40123456789",
+                 (date(2025, 1, 1) + timedelta(days=1)).isoformat(),
+                 400, "Birth date is in the future",              id="date-in-future"),
+
+    pytest.param("u1@mail.com", "usr", "Romania", "+40123456789", "2000-01-01",
+                 400, "Username too short",                       id="username-too-short"),
+
+    pytest.param("u2@mail.com", "u" * 21, "Romania", "+40123456789", "2000-01-01",
+                 400, "Username too long",                        id="username-too-long"),
+
+    pytest.param("u3@mail.com", "validuser", "Germany", "+40123456789", "2000-01-01",
+                 400, "Phone number prefix does not match the country",
+                 id="prefix-country-mismatch"),
+
+    pytest.param("u4@mail.com", "validuser", "Romania", "12345678", "2000-01-01",
+                 400, "Phone number prefix does not match the country",
+                 id="unknown-prefix"),
+]
+
+
+@freeze_time("2025-01-01")
+@pytest.mark.parametrize(
+    "email, username, country, phone, bdate, exp_status, exp_msg",
+    INVALID_CREATE_PARAMS,
+)
+def test_create_user_validation_errors(
+        um, email, username, country, phone, bdate, exp_status, exp_msg):
+    """Every invalid-input variant should yield the documented (status, msg)."""
+    if exp_msg == "Email already exists":
+        um.users.append(make_user(email=email))
+
+    status, msg = um.create_user(email, username, country, phone, bdate)
+    assert (status, msg) == (exp_status, exp_msg)
+
+
+# *Exception* branch ---------------------------------------------------------
+
+def test_create_user_bubbles_up_exception(monkeypatch, um):
+    """If the underlying save logic throws, the wrapper should re-raise."""
+    def boom(*_, **__):
+        raise RuntimeError("Simulated exception")
+
+    monkeypatch.setattr(um, "_persist_new_user", boom, raising=True)
+
+    with pytest.raises(RuntimeError, match="Simulated exception"):
+        um.create_user(
+            email="err@mail.com",
+            username="validuser",
+            country="Romania",
+            phone_number="+40123456789",
+            birth_date_str="2000-01-01",
+        )
+
+
+# *Happy path* ---------------------------------------------------------------
+
+def test_create_user_happy_path(um):
+    """All fields valid ➞ user is persisted and a 200/status message returned."""
+    status, msg = um.create_user(
+        email="new@mail.com",
+        username="validuser",
+        country="Romania",
+        phone_number="+40123456789",
+        birth_date_str="2000-01-01",
+    )
+
+    assert (status, msg) == (200, "User successfully created")
+    assert any(u.email == "new@mail.com" for u in um.users)
+```
+
+While the AI implementation does add an exception handling test that our implementation doesn't have, this is not strictly part of conditional coverage testing and could be added separately if needed it also added a new module that might make the project more bloated in the long run.
+
+Our implementation is more focused, cleaner, and directly tests each condition without unnecessary complexity or dependencies.
+
+---
