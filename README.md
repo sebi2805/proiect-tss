@@ -1,3 +1,141 @@
+# Demo
+
+[![Demo Preview](https://img.youtube.com/vi/4h-NoWC28mM/0.jpg)](https://youtu.be/4h-NoWC28mM)
+
+## Project structure and purpose
+
+Our approach would be to have a package 'src', what does contain our bussnies logic in 2 modules User and UserManager. Here we will have an functionality that will create users if certain information are validated, also in order to cover more tests we would like to implement a functionality for searching the user, this way we can adapt better tests to showcase
+
+The purpose of this project is to create tests using some the current tehcnologies and where certain requirements don't fit with the project, we would adapt it with some other packages or functionalities integrated in pycharm (because last year pychamr also integrated some code-coverage functionalities).
+
+Regarding the setup, we have a page dedicated to it, we try to make this code work in a similar way on multiple machine, that's why we created an venv, We could also consider using <https://github.com/pyenv/pyenv>, so we manage our python versions.
+
+This being said these are some projects that have a similar approach like us:
+
+- <https://github.com/MartinThoma/mpu> - a python library where tests are mandatory so you can have backwards compability
+- <https://github.com/ryankanno/cookiecutter-py> - a standard python project template
+
+on the other hand we also have some research papers that are studying the pytest inline and how small is the overload <https://arxiv.org/abs/2305.13486#:~:text=program%20statements,provides%2C%20and%20the%20intended%20use>, maybe we can also implement some of this
+
+## PyTest vs Unittest
+
+| Feature                | **Pytest (3rd party)**                                                                  | **unittest (standard library)**                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| **Initial Setup**      | External installation required, but auto-discovers tests effortlessly                   | Built-in (no install), but requires strict naming conventions (`test*` methods) |
+| **Test Syntax**        | Uses plain functions with `assert` (concise, detailed failure messages)                 | Requires `TestCase` classes and `assert*` methods (more boilerplate)            |
+| **Fixtures & Setup**   | Powerful fixtures (function, module, session scope); mocking plugins available          | `setUp`/`tearDown` methods; limited native fixture support                      |
+| **Extensibility**      | Rich plugin ecosystem (coverage, Django, benchmarks); active community                  | Basic built-in features; few extensions beyond third-party tools like `nose`    |
+| **Parallel Execution** | Yes – via plugins (e.g., `xdist`)                                                       | Not by default – only possible using external tools                             |
+| **IDE/CI Integration** | Well-supported in most IDEs (e.g., PyCharm) and CI tools; coverage needs config/plugins | Natively supported in IDEs/CI; coverage via `coverage.py` or IDE integration    |
+| **Current Popularity** | Widely adopted, de facto standard for new projects                                      |
+
+<https://blog.jetbrains.com/pycharm/2024/03/pytest-vs-unittest/#:~:text=That%20said%2C%20for%20new%20projects,has%20become%20the%20default%20choice>
+<https://dev.to/vbuxbaum/testing-tests-in-python-part-1-reasons-and-alternatives-42bn#:~:text=,assert>
+
+---
+
+## Pytest-cov vs. PyCharm Code Coverage
+
+Both use `coverage.py` under the hood. Key differences lie in usage and output:
+
+### ✅ Pytest-cov
+
+- Pytest plugin for CLI-based coverage.
+- Add `--cov` to pytest to collect coverage data (incl. parallel runs via `pytest-xdist`).
+- Outputs a text summary in the terminal.
+- Easily exportable (HTML/XML) with `coverage.py`.
+- Ideal for CI/CD (e.g. GitHub Actions, Jenkins).
+- Works in any dev environment (not tied to an IDE).
+
+### 🖥️ PyCharm Coverage
+
+- Built into the PyCharm IDE.
+- GUI summary per file/package.
+- Useful for fast feedback during development or teaching.
+- Can merge multiple coverage runs.
+
+---
+
+## Mutation
+
+To improve the quality of our tests and not just focus on code coverage, we’ll integrate **mutatin testing** using [Mutmut](https://github.com/boxed/mutmut). The idea is simple: we intentionally inject small bugs into the code (called **mutants**) and see if our tests catch them. If a mutant survives, it’s a sign that the test might not be verifying the behavior properly.
+
+We’re interested in testing not just that "code is run", but that it’s actually **validated**. For example, a test might give you 100% coverage but still miss a logic error if there’s no assertion and that's is what we are trying to combine also with the 2 tools dor code coverage.
+
+Mutmut works well with `pytest`, so the integration into our current stack will be smooth. Once installed (`pip install mutmut`), we can run `mutmut run` to generate mutants and get a report showing:
+
+- **Killed mutants** = tests failed → good.
+- **Survived mutants** = tests passed → weak spot in test logic.
+
+Mutmut applies mutations like:
+
+- Changing operators (`>` → `>=`, `+` → `-`)
+- Flipping booleans (`True` → `False`)
+- Removing return statements
+- Altering constant values or string literals
+
+---
+
+## Boundary Value Analysis
+
+Boundary Value Analysis (BVA) focuses on testing the boundaries of input domains rather than selecting arbitrary values. The rationale behind BVA is that errors are more likely to occur at the edges of valid input ranges rather than within the normal operating range. This technique is particularly effective for numeric values, string lengths, date ranges, and other inputs with clear minimum and maximum constraints.
+
+#### Why Use Boundary Value Analysis?
+
+- Catches edge case errors that might not appear in normal input values.
+- Reduces the number of test cases while still providing strong test coverage.
+- Ensures robustness of the system by testing both valid and invalid boundary inputs.
+
+---
+
+## Decision-Based Coverage
+
+Decision-Based Coverage (also known as branch coverage) is a white-box testing technique that ensures every decision point in the code is tested for all possible outcomes—true and false. Unlike line coverage, which only verifies if a line is executed, branch coverage verifies that each condition has been fully exercised.
+
+#### Key Concepts:
+
+- Decisions: Statements like if, for, while, and try/except blocks.
+- Branches: The two possible outcomes of each decision (e.g., True and False).
+- To achieve 100% decision coverage, each of the following must be tested:
+- Every if condition evaluated to both true and false
+- Every loop entered and skipped
+- Every exception raised and not raised
+
+---
+
+## Statement Analysis
+
+Statement Analysis is a technique used to evaluate whether each line of code in a program has been executed at least once during testing. This method ensures that no part of the code remains untested, reducing the risk of hidden bugs.
+
+#### Why Use Statement Analysis?
+
+- Identifies Dead Code – Helps detect unused or redundant code.
+- Improves Test Coverage – Ensures that every statement has been executed at least once.
+- Complements Code Coverage – While coverage tools show percentage metrics, statement analysis provides deeper insights into untested logic.
+
+---
+
+## Independent Circuit Testing
+
+Independent Circuit Testing (ICT) focuses on testing the individual decision circuits in a program to ensure all possible decision paths are verified. It is particularly useful for validating complex decision structures and ensuring that all logic paths are properly exercised in isolation.
+
+This method is based on McCabe's Cyclomatic Complexity formula, which helps determine the number of independent paths in a program. The formula is as follows:
+
+- **V(G) = e - n + 2** for a single program or subroutine, where:
+  - `e` is the number of edges (arcs),
+  - `n` is the number of nodes,
+  - `p` is the number of connected components (typically 1 for a single program).
+
+By calculating the number of independent circuits, ICT ensures that each unique logical decision path is tested without interference from other paths in the program.
+
+#### Why Use Independent Circuit Testing?
+
+- **Validates Decision Paths**: Ensures that all possible decision outcomes (true/false) are tested, providing comprehensive coverage.
+- **Reduces Complexity**: Focuses on testing small, independent sections of code, making it easier to identify errors in logic.
+- **Improves Test Accuracy**: By isolating logic tests, it reduces the chance of missing edge cases or subtle bugs.
+
+---
+
 ## Class Equivalence Analysis
 
 The `create_user` method accepts the following parameters:
@@ -63,6 +201,8 @@ These map to the following output equivalence classes:
 - **O7** = { status = 400; msg contains `"Birth date is in the future"` }
 - **O8** = { status = 400; msg contains `"Invalid phone number"` }
 - **O9** = { status = 400; msg contains `"Unsupported country"` }
+
+---
 
 ### Global Equivalence Classes
 
@@ -173,6 +313,28 @@ Key examples include:
         assert expected_msg_fragment in msg
 ```
 
+### Running the Tests and Coverage Analysis
+
+We executed the class equivalence tests using the following command:
+
+```sh
+pytest --cov=src --cov-report=term-missing test/test_equivalence_partitioning.py
+```
+
+The results were as follows:
+
+```plaintext
+Name                 Stmts   Miss  Cover   Missing
+--------------------------------------------------
+src/User.py              7      0   100%
+src/UserManager.py      40      4    90%   12-13, 38, 53
+src/__init__.py          0      0   100%
+--------------------------------------------------
+TOTAL                   47      4    91%
+```
+
+[![Video Preview](https://img.youtube.com/vi/jrMZes8y4pg/0.jpg)](https://youtu.be/jrMZes8y4pg)
+
 ## Boundary Value Analysis
 
 ### What is Boundary Value Analysis?
@@ -253,11 +415,9 @@ TOTAL                   47      8    83%
 
 [![Video Preview](https://img.youtube.com/vi/Ai9dJchoAgs/0.jpg)](https://youtu.be/Ai9dJchoAgs)
 
-
-
 ---
 
-### Why 100% Coverage Isn't Necessary
+### Coverage analysis
 
 The reported 80% coverage for UserManager.py indicates that some lines are not executed by our boundary tests. However, this does not mean that our boundary testing is incomplete. The missing lines are not related to boundary conditions.
 
@@ -266,8 +426,6 @@ Since our goal was to validate boundary conditions, achieving 100% coverage is n
 We validated that extreme and edge-case inputs are properly handled. Although we achieved 80% coverage, our tests sufficiently address critical boundary conditions, ensuring robust user validation.
 
 ---
-
-
 
 ## Decision Coverage
 
@@ -279,15 +437,16 @@ We validated that extreme and edge-case inputs are properly handled. Although we
 
 This function includes several decisions that must be covered to guarantee robust behavior:
 
-| # | Decision Statement | Type | Description |
-|--|---------------------|------|-------------|
-| 1 | `if birth_date >= datetime.today()` | simple if | Checks if the birth date is in the future |
-| 2 | `if not self.validate_email(email)` | simple if | Validates email format |
-| 3 | `if self.email_exists(email)` | if without else | Checks if the email is already used |
-| 4 | `if len(username) <= 3` / `elif len(username) >= 20` | if with else | Checks username length |
-| 5 | `if not self.validate_phone_prefix(...)` | simple if | Checks phone prefix-country match |
+| #   | Decision Statement                                   | Type            | Description                               |
+| --- | ---------------------------------------------------- | --------------- | ----------------------------------------- |
+| 1   | `if birth_date >= datetime.today()`                  | simple if       | Checks if the birth date is in the future |
+| 2   | `if not self.validate_email(email)`                  | simple if       | Validates email format                    |
+| 3   | `if self.email_exists(email)`                        | if without else | Checks if the email is already used       |
+| 4   | `if len(username) <= 3` / `elif len(username) >= 20` | if with else    | Checks username length                    |
+| 5   | `if not self.validate_phone_prefix(...)`             | simple if       | Checks phone prefix-country match         |
 
 Helper functions tested separately:
+
 - `email_exists()` – contains a `for` + `if`
 - `validate_phone_prefix()` – contains a `for` + `if` + `return`
 
@@ -295,22 +454,22 @@ Helper functions tested separately:
 
 ### Loops and Decisions Covered
 
-| Location | Loop Type | Behavior Tested |
-|----------|-----------|------------------|
-| `for user in self.users:` | `for` loop in `email_exists()` | Tests case where email does not match any existing user |
+| Location                                  | Loop Type                               | Behavior Tested                                                 |
+| ----------------------------------------- | --------------------------------------- | --------------------------------------------------------------- |
+| `for user in self.users:`                 | `for` loop in `email_exists()`          | Tests case where email does not match any existing user         |
 | `for c, prefix in country_codes.items():` | `for` loop in `validate_phone_prefix()` | Tests case where prefix doesn't match (triggers fallback logic) |
 
 ---
 
 ### Implemented Tests: `test_decision_coverage.py`
 
-| Test | Branch Tested | Target Decision |
-|------|---------------|-----------------|
-| `test_email_exists_with_non_matching_email()` | False | `email_exists()` |
-| `test_validate_phone_prefix_no_match()` | False | `validate_phone_prefix()` |
-| `test_username_exactly_3_characters()` | True → error | `if len(username) <= 3` |
-| `test_birth_date_exact_today()` | True → error | `if birth_date >= today()` |
-| `test_success_path_user_creation()` | All conditions False | Positive path through all branches |
+| Test                                          | Branch Tested        | Target Decision                    |
+| --------------------------------------------- | -------------------- | ---------------------------------- |
+| `test_email_exists_with_non_matching_email()` | False                | `email_exists()`                   |
+| `test_validate_phone_prefix_no_match()`       | False                | `validate_phone_prefix()`          |
+| `test_username_exactly_3_characters()`        | True → error         | `if len(username) <= 3`            |
+| `test_birth_date_exact_today()`               | True → error         | `if birth_date >= today()`         |
+| `test_success_path_user_creation()`           | All conditions False | Positive path through all branches |
 
 ---
 
@@ -329,10 +488,9 @@ Helper functions tested separately:
 
 ---
 
-
 [![Video Preview](https://img.youtube.com/vi/qhdAivN3ZgI/0.jpg)](https://youtu.be/qhdAivN3ZgI)
 
-
+---
 
 ## Statement Analysis
 
@@ -345,16 +503,16 @@ For statement coverage testing, each instruction in the source code must be exec
 
 The following table shows test inputs and the instructions they cover:
 
-| Test ID | Email | Username | Birth Date | Phone Number | Country | Expected Output | Lines Covered |
-|---------|-------|----------|------------|--------------|---------|-----------------|---------------|
-| 1 | valid@example.com | validuser | 1990-01-01 | +40 712345678 | Romania | 200, User successfully created | 36-37, 40-41, 43-44, 46-47, 49-50, 52-53, 55-56, 58-61 |
-| 2 | invalid-email | validuser | 1990-01-01 | +40 712345678 | Romania | 400, Invalid email | 36-37, 40-41, 43-45 |
-| 3 | existing@example.com | validuser | 1990-01-01 | +40 712345678 | Romania | 400, Email already exists | 36-37, 40-41, 43-44, 46-48 |
-| 4 | valid@example.com | ab | 1990-01-01 | +40 712345678 | Romania | 400, Username too short | 36-37, 40-41, 43-44, 46-47, 49-51 |
-| 5 | valid@example.com | thisusernameiswaytoolong | 1990-01-01 | +40 712345678 | Romania | 400, Username too long | 36-37, 40-41, 43-44, 46-47, 49-50, 52-54 |
-| 6 | valid@example.com | validuser | invalid-date | +40 712345678 | Romania | 400, Invalid birth date | 36, 38-39 |
-| 7 | valid@example.com | validuser | 2099-01-01 | +40 712345678 | Romania | 400, Birth date is in the future | 36-37, 40-42 |
-| 8 | valid@example.com | validuser | 1990-01-01 | +33 712345678 | Romania | 400, Phone number prefix does not match | 36-37, 40-41, 43-44, 46-47, 49-50, 52-53, 55-57 |
+| Test ID | Email                | Username                 | Birth Date   | Phone Number  | Country | Expected Output                         | Lines Covered                                          |
+| ------- | -------------------- | ------------------------ | ------------ | ------------- | ------- | --------------------------------------- | ------------------------------------------------------ |
+| 1       | valid@example.com    | validuser                | 1990-01-01   | +40 712345678 | Romania | 200, User successfully created          | 36-37, 40-41, 43-44, 46-47, 49-50, 52-53, 55-56, 58-61 |
+| 2       | invalid-email        | validuser                | 1990-01-01   | +40 712345678 | Romania | 400, Invalid email                      | 36-37, 40-41, 43-45                                    |
+| 3       | existing@example.com | validuser                | 1990-01-01   | +40 712345678 | Romania | 400, Email already exists               | 36-37, 40-41, 43-44, 46-48                             |
+| 4       | valid@example.com    | ab                       | 1990-01-01   | +40 712345678 | Romania | 400, Username too short                 | 36-37, 40-41, 43-44, 46-47, 49-51                      |
+| 5       | valid@example.com    | thisusernameiswaytoolong | 1990-01-01   | +40 712345678 | Romania | 400, Username too long                  | 36-37, 40-41, 43-44, 46-47, 49-50, 52-54               |
+| 6       | valid@example.com    | validuser                | invalid-date | +40 712345678 | Romania | 400, Invalid birth date                 | 36, 38-39                                              |
+| 7       | valid@example.com    | validuser                | 2099-01-01   | +40 712345678 | Romania | 400, Birth date is in the future        | 36-37, 40-42                                           |
+| 8       | valid@example.com    | validuser                | 1990-01-01   | +33 712345678 | Romania | 400, Phone number prefix does not match | 36-37, 40-41, 43-44, 46-47, 49-50, 52-53, 55-57        |
 
 ![Control Flow Graph Code](images/statement_analysis_code.png)
 
@@ -569,37 +727,37 @@ TOTAL                   47      0   100%
 
 [![Video Preview](https://img.youtube.com/vi/vAOG3gtxtfs/0.jpg)](https://youtu.be/vAOG3gtxtfs)
 
-
 ## Condition Coverage Analysis
 
 ### Why Condition Coverage?
+
 Condition coverage forces **every atomic Boolean operand** inside every decision to evaluate
 to both `True` and `False` at least once.  
-This satisfies the *condition coverage.* criterions.
+This satisfies the _condition coverage._ criterions.
 
 ### Decision points in `UserManager`
 
-| # | Location / predicate                                                   | Atomic conditions flipped |
-|---|------------------------------------------------------------------------|---------------------------|
-| 1 | `try/except` around `datetime.strptime`                                | *raises* / *does-not-raise* |
-| 2 | `if birth_date >= today:`                                              | `birth_date >= today` |
-| 3 | `if not self.validate_email(email):`                                   | `validate_email(email)` |
-| 4 | `if self.email_exists(email):`                                         | `email_exists(email)` |
-| 5 | `if len(username) < 4:`                                                | `len(username) < 4` |
-| 6 | `elif len(username) > 20:`                                             | `len(username) > 20` |
-| 7 | `if not self.validate_phone_prefix(phone_number, country):`            | `validate_phone_prefix(phone_number, country)` |
+| #   | Location / predicate                                        | Atomic conditions flipped                      |
+| --- | ----------------------------------------------------------- | ---------------------------------------------- |
+| 1   | `try/except` around `datetime.strptime`                     | _raises_ / _does-not-raise_                    |
+| 2   | `if birth_date >= today:`                                   | `birth_date >= today`                          |
+| 3   | `if not self.validate_email(email):`                        | `validate_email(email)`                        |
+| 4   | `if self.email_exists(email):`                              | `email_exists(email)`                          |
+| 5   | `if len(username) < 4:`                                     | `len(username) < 4`                            |
+| 6   | `elif len(username) > 20:`                                  | `len(username) > 20`                           |
+| 7   | `if not self.validate_phone_prefix(phone_number, country):` | `validate_phone_prefix(phone_number, country)` |
 
 ### Mapping tests → atomic conditions
 
-| Predicate ID | **True** exercised by                          | **False** exercised by            |
-|--------------|------------------------------------------------|-----------------------------------|
-| 1            | CU2 (invalid date format)                      | all other CU* cases               |
-| 2            | CU3 (future date)                              | CU1, CU4-CU9                      |
-| 3            | CU1 (invalid email)                            | CU2-CU9, VE1 helper test          |
-| 4            | CU8 (duplicate email) & E1 helper test         | all non-duplicate scenarios       |
-| 5            | CU4 (username too short)                       | everything else                   |
-| 6            | CU5 (username too long)                        | everything else                   |
-| 7            | CU6 & CU7, VP2/VP3 helper tests                | CU1-CU5, CU8-CU9, VP1             |
+| Predicate ID | **True** exercised by                  | **False** exercised by      |
+| ------------ | -------------------------------------- | --------------------------- |
+| 1            | CU2 (invalid date format)              | all other CU\* cases        |
+| 2            | CU3 (future date)                      | CU1, CU4-CU9                |
+| 3            | CU1 (invalid email)                    | CU2-CU9, VE1 helper test    |
+| 4            | CU8 (duplicate email) & E1 helper test | all non-duplicate scenarios |
+| 5            | CU4 (username too short)               | everything else             |
+| 6            | CU5 (username too long)                | everything else             |
+| 7            | CU6 & CU7, VP2/VP3 helper tests        | CU1-CU5, CU8-CU9, VP1       |
 
 ### Achieved coverage
 

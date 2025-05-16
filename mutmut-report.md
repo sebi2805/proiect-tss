@@ -6,7 +6,7 @@ We’re using **mutmut v2.5.2** to generate and test mutants because in the 3.x 
 
 ## Requirements
 
-- A Linux or macOS environment
+- A Linux or macOS environment. This is mandatory because this library does not have support for Windows, we are using WSL.
 - Dependencies installed from `requirements.txt`
 
 ---
@@ -19,7 +19,11 @@ We’re using **mutmut v2.5.2** to generate and test mutants because in the 3.x 
    bash mutmut.sh
    ```
 
-This will create all mutants, run your tests against them, and produce both the console report and an HTML report.
+This will create all mutants, run your tests against them, and produce both the console report and an HTML report. Use this command in order to eliminate the old cache.
+
+## Results
+
+We analyzed results in multiple batches as we tried to eliminate all the mutants. For the following sections you can see the progress that we did.
 
 ## First Run Results
 
